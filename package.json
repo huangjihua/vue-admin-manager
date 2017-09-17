@@ -1,8 +1,8 @@
 {
   "name": "vue-admin-manager",
   "version": "1.0.0",
-  "description": "后台管理系统",
-  "author": "fantasykai <kai.fantasy@gmail.com>",
+  "description": "医院后台管理系统",
+  "author": "hank <hank.online@foxmail.com",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",

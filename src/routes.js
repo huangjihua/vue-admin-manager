@@ -65,11 +65,11 @@ let routes = [
         name: '用户管理',
         iconCls: 'el-icon-star-off',
         children: [
-            {path: '/userManage', component: UserManage, name: 'Sys用户管理'},
+            {path: '/userManage', component: UserManage, name: '用户管理'},
             {
                 path: '/friendsManage',
                 component: FriendsManage,
-                name: 'Sys好友管理',
+                name: '好友管理',
                 hidden: true
             },
             {

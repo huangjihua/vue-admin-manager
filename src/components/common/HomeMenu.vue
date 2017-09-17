@@ -89,7 +89,7 @@
     export default {
         data() {
             return {
-                sysName: 'Sys后台管理',
+                sysName: '医院后台管理',
                 collapsed: false,
 //                nickname: '',
                 sysUserAvatar: avatar,

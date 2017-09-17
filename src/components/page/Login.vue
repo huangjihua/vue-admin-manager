@@ -2,7 +2,7 @@
     <div>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-position="left" label-width="0px"
                  class="demo-ruleForm login-container">
-            <h3 class="title">Sys后台管理</h3>
+            <h3 class="title">医院后台管理</h3>
             <el-form-item prop="username">
                 <el-input v-model="ruleForm.username" placeholder="username"></el-input>
             </el-form-item>
