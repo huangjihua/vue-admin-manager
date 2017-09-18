@@ -29,7 +29,7 @@ const router = new VueRouter({
     routes
 });
 
-// Some middleware to help us ensure the user is authenticated.
+// 一些中间件来帮助我们确保用户身份验证。
 router.beforeEach((to, from, next) => {
     //NProgress.start();
     if (to.path === '/login') {
@@ -57,4 +57,3 @@ new Vue({
     store,
     render: h => h(App)
 }).$mount('#app');
-
