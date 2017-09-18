@@ -25,257 +25,224 @@
             </el-form-item>
         </el-form>
     </el-col>
-    <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-        <el-card class="box-card">
-            <div class="mix-echarts">
-                <IEcharts :option="cycle_mix"></IEcharts>
-            </div>
-        </el-card>
-    </el-col>
+    <el-row :gutter="20">
+        <el-col :xs="45" :sm="45" :md="24" :lg="24">
+            <el-card class="box-card">
+                <div class="echarts">
+                    <IEcharts :option="cycle_mix"></IEcharts>
+                </div>
+            </el-card>
+        </el-col>
+        <el-col :xs="45" :sm="45" :md="24" :lg="24">
+            <el-card class="box-card">
+                <div class="echarts">
+                    <IEcharts :option="cycle_mix"></IEcharts>
+                </div>
+            </el-card>
+        </el-col>
+
+    </el-row>
+    <!--<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">-->
+       <!---->
+    <!--</el-col>-->
 
 </template>
 <script>
-    import { mapGetters } from 'vuex';
-    //    import {getNickname, getSTSToken} from '../../api';
-    import avatar from '../../../static/img/avatar.gif';
+    import IEcharts from 'vue-echarts-v3/src/full.vue';
+    //    import {aggregate}  from '../../api';
+    import {aggregate} from 'api/aggregate';
+    import monthUserNumsReq from 'static/requestList/cycleUserNum.json';
+    // 时间处理
+    import moment from 'moment';
     export default {
-        data() {
+        data: function () {
             return {
-                sysName: '医院后台管理',
-                collapsed: false,
-                //                nickname: '',
-                sysUserAvatar: avatar,
-                form: {
-                    name: '',
-                    region: '',
-                    date1: '',
-                    date2: '',
-                    delivery: false,
-                    type: [],
-                    resource: '',
-                    desc: ''
+                mock: true,
+                pickerOptions1: {
+                    shortcuts: [{
+                        text: '今天',
+                        onClick(picker) {
+                            picker.$emit('pick', new Date());
+                        }
+                    }, {
+                        text: '昨天',
+                        onClick(picker) {
+                            const date = moment().subtract(1, 'days').format('YYYY-MM-DD 0:0:0');
+                            picker.$emit('pick', date);
+                        }
+                    }, {
+                        text: '7天前',
+                        onClick(picker) {
+                            const date = moment().subtract(7, 'days').format('YYYY-MM-DD 0:0:0');
+                            picker.$emit('pick', date);
+                        }
+                    }, {
+                        text: '30天前',
+                        onClick(picker) {
+                            const date = moment().subtract(30, 'days').format('YYYY-MM-DD 0:0:0');
+                            picker.$emit('pick', date);
+                        }
+                    }]
+                },
+                beginTime: '',
+                endTime: '',
+                cycle_mix: {
+                    color: ["#13CE66", "#20a0ff", "#F7BA2A"],
+                    title: {
+                        text: '用户增长趋势',
+                        x: 'left'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    toolbox: {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: false
+                            },
+                            restore: {
+                                show: true
+                            },
+                            saveAsImage: {
+                                show: true
+                            }
+                        }
+                    },
+                    legend: {
+                        data: []
+                    },
+                    xAxis: {
+                        data: []
+                    },
+                    yAxis: {},
+                    series: [
+                        {
+                            name: "",
+                            type: "bar",
+                            data: []
+                        },
+                        {
+                            name: "",
+                            type: "bar",
+                            data: []
+                        },
+                        {
+                            name: "",
+                            type: "line",
+                            data: []
+                        },
+                    ]
                 }
-            }
+            };
         },
-        computed: {
-            ...mapGetters([
-                'nickname'
-            ])
-    },
-    methods: {
-        onSubmit() {
-            console.log('submit!');
+        components: {
+            IEcharts
         },
-        handleopen() {
-            //console.log('handleopen');
-        },
-        handleclose() {
-            //console.log('handleclose');
-        },
-        handleselect: function (a, b) {
-        },
-        //退出登录
-        logout: function () {
-            var _this = this;
-            this.$confirm('确认退出吗?', '提示', {
-                //type: 'warning'
-            }).then(() => {
-                localStorage.removeItem('account');
-            localStorage.removeItem('token');
-            localStorage.removeItem('expiration');
-            localStorage.removeItem('nickname');
-            _this.$router.push('/login');
-        }).catch(() => {
+        methods: {
+            initDate: function () {
 
+                let _this = this;
+
+                _this.cycle_mix.xAxis.data = [];
+
+                // android的用户数
+                _this.cycle_mix.series[0].data = [];
+
+                // ios的用户数ios
+                _this.cycle_mix.series[1].data = [];
+
+                // android 及 ios的用户数
+                _this.cycle_mix.series[2].data = [];
+            },
+            /**
+             * 统计7天内的用户增长情况
+             */
+            cycleUserNumsStat: function () {
+                let params = monthUserNumsReq;
+                if (null != this.beginTime && null != this.endTime) {
+
+                    let starttime = moment(this.beginTime).format('YYYY-MM-DD 0:0:0');
+                    let endtime = moment(this.endTime).format('YYYY-MM-DD 0:0:0');
+
+
+                    params = Object.assign({'starttime': starttime, 'endtime': endtime}, params)
+                }
+                if (this.mock) {
+                    params = Object.assign({'statFunc': 'cycleUserNumsStat', 'type': 0}, params)
+                }
+                this.initDate();
+                aggregate(params)
+                    .then(data => {
+                    this.cycle_mix.legend.data = ['Android', 'ios', '总数'];
+                this.cycle_mix.series[0].name = 'Android';
+                this.cycle_mix.series[1].name = 'ios';
+                this.cycle_mix.series[2].name = '总数';
+
+                let dateNum = moment(this.endTime).diff(moment(this.beginTime), 'days')
+
+                for (let j = dateNum; j > 0; j--) {
+
+                    let tododay = moment(this.endTime).subtract(j, 'days').format('YYYY-MM-DD');
+
+                    this.cycle_mix.xAxis.data.push(tododay);
+
+                    let androidNum = 0;
+                    let iosNum = 0;
+                    for (let i = data.length - 1; i >= 0; i--) {
+
+                        let day = data[i]._id.day;
+                        let deviceType = data[i]._id.deviceType;
+                        let num = data[i].num;
+
+                        if (day == tododay) {
+
+                            if (1 == deviceType) {
+                                androidNum = num;
+
+                            } else if (2 == deviceType) {
+                                iosNum = num;
+                            }
+                        }
+                    }
+
+                    // android的用户数
+                    this.cycle_mix.series[0].data.push(androidNum);
+
+                    // ios的用户数ios
+                    this.cycle_mix.series[1].data.push(iosNum);
+
+                    // android 及 ios的用户数
+                    this.cycle_mix.series[2].data.push(androidNum + iosNum);
+                }
             });
+
+            },
         },
-        //折叠导航栏
-        collapse: function () {
-            this.collapsed = !this.collapsed;
-        },
-        showMenu(i, status){
-            this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-' + i)[0].style.display = status ? 'block' : 'none';
-        },
-        getUserInfo() {
+        mounted: function () {
+            this.beginTime = moment().subtract(7, 'days').format('YYYY-MM-DD 0:0:0');
+            this.endTime = moment().format('YYYY-MM-DD 0:0:0');
 
-            //                let uid = localStorage.getItem('account');
-            //
-            //                getNickname(uid).then((res) => {
-            //                    let {nickname} = res;
-            //                    if (nickname) {
-            //                        this.nickname = nickname;
-            //                        localStorage.setItem("nickname", nickname)
-            //                    }
-            //                });
-
-            this.$store.dispatch('GetUserInfo').then(() => {
-                // this.showDialog = true;
-                this.$router.push({ path: '/' });
-        }).catch(err => {
-                this.$message.error(err);
-        });
-
-        },
-        getStsToken() {
-
-            //                getSTSToken().then((data) => {
-            //
-            //                    let {AccessKeySecret, SecurityToken, Expiration, AccessKeyId} = data;
-            //
-            //                    let ossSts = {
-            //                        'AccessKeySecret': AccessKeySecret,
-            //                        'SecurityToken': SecurityToken,
-            //                        'Expiration': Expiration,
-            //                        'AccessKeyId': AccessKeyId
-            //                    };
-            //
-            //                    localStorage.removeItem('ossSts');
-            //                    localStorage.setItem('ossSts', JSON.stringify(ossSts));
-            //                });
-
-            this.$store.dispatch('GetStsToken').then(() => {
-            }).catch(err => {
-                this.$message.error(err);
-        });
-
-
-        },
-    },
-    mounted() {
-        this.getUserInfo();
-        this.getStsToken();
-    }
-    }
-
+            this.cycleUserNumsStat();
+        }
+    };
 </script>
 
-<style scoped lang="scss">
-    @import '~scss_vars';
-
-    .blu-container {
-        position: absolute;
-        top: 0px;
-        bottom: 0px;
+<style scoped>
+    .echarts {
+        float: left;
+        width: 500px;
+        height: 400px;
+    }
+    .c-charts {
+        height: 500px;
         width: 100%;
-    .header {
-        height: 60px;
-        line-height: 60px;
-        background: $color-primary;
-        color: #fff;
-    .userinfo {
-        text-align: right;
-        padding-right: 35px;
-        float: right;
-    .userinfo-inner {
-        cursor: pointer;
-        color: #fff;
-    img {
-        width: 40px;
-        height: 40px;
-        border-radius: 20px;
-        margin: 10px 0px 10px 10px;
-        float: right;
     }
-    }
-    }
-    .logo {
-    //width:230px;
-        height: 60px;
-        font-size: 22px;
-        padding-left: 20px;
-        padding-right: 20px;
-        border-color: rgba(238, 241, 146, 0.3);
-        border-right-width: 1px;
-        border-right-style: solid;
-    img {
-        width: 40px;
-        float: left;
-        margin: 10px 10px 10px 18px;
-    }
-    .txt {
-        color: #fff;
-    }
-    }
-    .logo-width {
-        width: 230px;
-    }
-    .logo-collapse-width {
-        width: 60px
-    }
-    .tools {
-        padding: 0px 23px;
-        width: 14px;
-        height: 60px;
-        line-height: 60px;
-        cursor: pointer;
-    }
-    }
-    .main {
-        display: flex;
-    // background: #324057;
-        position: absolute;
-        top: 60px;
-        bottom: 0px;
-        overflow: hidden;
-    aside {
-        flex: 0 0 230px;
-        width: 230px;
-    // position: absolute;
-    // top: 0px;
-    // bottom: 0px;
-    .el-menu {
-        height: 100%;
-    }
-    .collapsed {
-        width: 60px;
-    .item {
-        position: relative;
-    }
-    .submenu {
-        position: absolute;
-        top: 0px;
-        left: 60px;
-        z-index: 99999;
-        height: auto;
-        display: none;
-    }
-
-    }
-    }
-    .menu-collapsed {
-        flex: 0 0 60px;
-        width: 60px;
-    }
-    .menu-expanded {
-        flex: 0 0 230px;
-        width: 230px;
-    }
-    .blu-content-container {
-    // background: #f1f2f7;
-        flex: 1;
-    // position: absolute;
-    // right: 0px;
-    // top: 0px;
-    // bottom: 0px;
-    // left: 230px;
-        overflow-y: scroll;
-        padding: 20px;
-    .breadcrumb-container {
-    //margin-bottom: 15px;
-    .title {
-        width: 200px;
-        float: left;
-        color: #475669;
-    }
-    .breadcrumb-inner {
-        float: left;
-    }
-    }
-    .blu-content-wrapper {
-        background-color: #fff;
-        box-sizing: border-box;
-    }
-    }
-    }
+    .mix-echarts {
+        width: 100%;
+        height: 600px;
     }
 </style>

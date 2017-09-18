@@ -98,6 +98,15 @@ let routes = [
         ]
     },
     {
+        path: '/',
+        component: Home,
+        name: '医院物流管理',
+        iconCls: 'el-icon-date',
+        children:[
+            {path: '/logisticsStatistics', component: LoggedUserNumCharts, name: '物流数统计'}
+        ]
+    },
+    {
         path: '*',
         hidden: true,
         redirect: {path: '/404'}
