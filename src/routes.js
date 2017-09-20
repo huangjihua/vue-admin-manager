@@ -14,7 +14,7 @@ import AutoReplyCfg from './components/page/operation/AutoReplyCfg.vue';
 import FrisNumCycleCharts from './components/page/friends/stat/FrisNumCycleCharts.vue';
 import MsgNumCycleCharts from './components/page/msg/stat/MsgNumCycleCharts.vue';
 import GeoUserNumCityRanked from './components/page/userDataStat/GeoUserNumCityRanked.vue';
-
+import  logisticsStatistics from './components/page/hospitalLogisticsManage/LogisticsStatistics .vue'
 
 let routes = [
     {
@@ -103,7 +103,7 @@ let routes = [
         name: '医院物流管理',
         iconCls: 'el-icon-date',
         children:[
-            {path: '/logisticsStatistics', component: LoggedUserNumCharts, name: '物流数统计'}
+            {path: '/logisticsStatistics', component: logisticsStatistics, name: '物流数统计'}
         ]
     },
     {

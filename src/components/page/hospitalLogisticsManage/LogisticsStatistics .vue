@@ -1,57 +1,54 @@
 <template>
-    <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-        <el-form :inline="true">
-            <el-form-item>
-                <el-date-picker
-                    v-model="beginTime"
-                    type="date"
-                    placeholder="选择日期时间"
-                    align="right"
-                    format="yyyy-MM-dd 0:0:0"
-                    :picker-options="pickerOptions1">
-                </el-date-picker>
-                -
+    <section class="toolbar">
+        <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+            <el-form :inline="true">
+                <el-form-item>
+                    <el-date-picker
+                        v-model="beginTime"
+                        type="date"
+                        placeholder="选择日期时间"
+                        align="right"
+                        format="yyyy-MM-dd 0:0:0"
+                        :picker-options="pickerOptions1">
+                    </el-date-picker>
+                    -
 
 
-                <el-date-picker
-                    v-model="endTime"
-                    type="date"
-                    placeholder="选择日期时间"
-                    align="right"
-                    format="yyyy-MM-dd 0:0:0"
-                    :picker-options="pickerOptions1">
-                </el-date-picker>
-                <el-button type="primary" v-on:click="cycleUserNumsStat">查询</el-button>
-            </el-form-item>
-        </el-form>
-    </el-col>
-    <el-row :gutter="20">
-        <el-col :xs="45" :sm="45" :md="24" :lg="24">
-            <el-card class="box-card">
-                <div class="echarts">
-                    <IEcharts :option="cycle_mix"></IEcharts>
-                </div>
-            </el-card>
+                    <el-date-picker
+                        v-model="endTime"
+                        type="date"
+                        placeholder="选择日期时间"
+                        align="right"
+                        format="yyyy-MM-dd 0:0:0"
+                        :picker-options="pickerOptions1">
+                    </el-date-picker>
+                    <el-button type="primary" v-on:click="cycleUserNumsStat">查询</el-button>
+                </el-form-item>
+            </el-form>
         </el-col>
-        <el-col :xs="45" :sm="45" :md="24" :lg="24">
-            <el-card class="box-card">
-                <div class="echarts">
-                    <IEcharts :option="cycle_mix"></IEcharts>
-                </div>
-            </el-card>
-        </el-col>
+        <el-row :gutter="20">
+            <el-col :xs="24" :sm="24" :md="12" :lg="12">
+                <el-card class="box-card">
+                    <div class="echarts">
+                        <IEcharts :option="cycle_mix"></IEcharts>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="12" :lg="12">
+                <el-card class="box-card">
+                    <div class="echarts">
+                        <IEcharts :option="pie"></IEcharts>
+                    </div>
+                </el-card>
+            </el-col>
 
-    </el-row>
-    <!--<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">-->
-       <!---->
-    <!--</el-col>-->
-
+        </el-row>
+    </section>
 </template>
 <script>
     import IEcharts from 'vue-echarts-v3/src/full.vue';
-    //    import {aggregate}  from '../../api';
     import {aggregate} from 'api/aggregate';
-    import monthUserNumsReq from 'static/requestList/cycleUserNum.json';
+
     // 时间处理
     import moment from 'moment';
     export default {
@@ -83,6 +80,38 @@
                             picker.$emit('pick', date);
                         }
                     }]
+                },
+                pie: {
+                    //                color: ["#20a0ff","#61a0a8"],
+                    title: {
+                        text: 'android/ios用户总占比',
+                        x: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: []
+                    },
+                    series: [
+                        {
+                            name: 'Android、ios用户总占比',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '50%'],
+                            data: [],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
                 },
                 beginTime: '',
                 endTime: '',
@@ -142,10 +171,28 @@
         components: {
             IEcharts
         },
+        filters: {
+            // 格式化数字
+            numFormat(num)
+            {
+                var num = (num || 0).toString(), result = '';
+                while (num.length > 3) {
+                    result = ',' + num.slice(-3) + result;
+                    num = num.slice(0, num.length - 3);
+                }
+                if (num) {
+                    result = num + result;
+                }
+                return result;
+            }
+        },
         methods: {
             initDate: function () {
 
                 let _this = this;
+
+                _this.pie.legend.data = [];
+                _this.pie.series[0].data = [];
 
                 _this.cycle_mix.xAxis.data = [];
 

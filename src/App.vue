@@ -34,7 +34,9 @@ body {
 	bottom: 0px;
 	width: 100%;
 }
-
+.el-card__body {
+    padding: 4px;
+}
 .el-submenu [class^=fa] {
     vertical-align: baseline;
     margin-right: 10px;
