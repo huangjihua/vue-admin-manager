@@ -26,8 +26,8 @@ import {
     StatZhuCeVer,
     StatActiveVer
 } from './data/dashboard';
-
 import {addUserTrend, ActiveUserTrend, UserRelationThrend, UserMsgThrend} from './data/trendData';
+import {TodayLogisticList, MonthLogisticList,YearLogisticList} from './data/logisticData';
 
 export default  {
     /**
@@ -131,6 +131,39 @@ export default  {
                 if ('cycleMsgNumStat' === statFunc) {
                     Res = UserMsgThrend;
                 }
+                //院内物流数
+                if('logisticNum' === statFunc){
+                    switch (type) {
+                        case 'day':
+                            Res = TodayLogisticList;
+                            break;
+                        case 'month':
+                            Res = MonthLogisticList;
+                            break;
+                        case 'year':
+                            Res =  YearLogisticList;
+                            break;
+                    }
+                }
+                // 药品和耗材
+                if('loadDataCharts' === statFunc){
+                    switch (type) {
+                        case 'week':
+                            Res = TodayLogisticList;
+                            break;
+                        case 'month':
+                            Res = MonthLogisticList;
+                            break;
+                        case 'week_top_ten':
+                            Res =  YearLogisticList;
+                            break;
+                        case 'month_top_ten':
+                            Res =  YearLogisticList;
+                            break;
+                    }
+                }
+
+
 
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {

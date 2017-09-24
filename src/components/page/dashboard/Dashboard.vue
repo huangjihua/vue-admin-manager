@@ -621,43 +621,35 @@
             }
         },
         computed: {
-            userTotal()
-            {
+            userTotal(){
                 // 计算属性: 用户总数
                 return this.total.androidNum + this.total.iosNum;
             },
-            yesterdayTotal()
-            {
+            yesterdayTotal() {
                 // 计算属性: 昨天的用户总数
                 return this.total.android1Num + this.total.ios1Num;
             },
-            weekTotal()
-            {
+            weekTotal() {
                 // 计算属性: 7天内的用户总数
                 return this.total.android7Num + this.total.ios7Num;
             },
-            monthTotal()
-            {
+            monthTotal(){
                 // 计算属性: 30天内的用户总数
                 return this.total.android30Num + this.total.ios30Num;
             },
-            yesterdayActiveTotal()
-            {
+            yesterdayActiveTotal(){
                 // 计算属性: 昨天的活跃用户总数
                 return this.activeTotal.android1Num + this.activeTotal.ios1Num;
             },
-            weekActiveTotal()
-            {
+            weekActiveTotal(){
                 // 计算属性: 7天内的活跃用户总数
                 return this.activeTotal.android7Num + this.activeTotal.ios7Num;
             },
-            monthActiveTotal()
-            {
+            monthActiveTotal() {
                 // 计算属性: 30天内的活跃用户总数
                 return this.activeTotal.android30Num + this.activeTotal.ios30Num;
             },
-            threeMonthsActiveTotal()
-            {
+            threeMonthsActiveTotal(){
                 // 计算属性: 90天内的活跃用户总数
                 return this.activeTotal.android90Num + this.activeTotal.ios90Num;
             }
@@ -721,28 +713,28 @@
                                         this.total.iosNum = value;
                                         break;
                                     case 1:
-                                        this.total.ios1Num = value
+                                        this.total.ios1Num = value;
                                         break;
                                     case 7:
-                                        this.total.ios7Num = value
+                                        this.total.ios7Num = value;
                                         break;
                                     case 30:
-                                        this.total.ios30Num = value
+                                        this.total.ios30Num = value;
                                         break;
                                     case 190:
-                                        this.activeTotal.ios90Num = value
+                                        this.activeTotal.ios90Num = value;
                                         break;
                                     case 11:
-                                        this.activeTotal.ios1Num = value
+                                        this.activeTotal.ios1Num = value;
                                         break;
                                     case 17:
-                                        this.activeTotal.ios7Num = value
+                                        this.activeTotal.ios7Num = value;
                                         break;
                                     case 130:
-                                        this.activeTotal.ios30Num = value
+                                        this.activeTotal.ios30Num = value;
                                         break;
                                     default:
-                                        this.total.iosNum = value
+                                        this.total.iosNum = value;
                                 }
                             } else {
                                 devType = 'unKnow';
@@ -819,10 +811,10 @@
             phoneModelStat: function (activeStat = false, beginTime = null, endTime = null, statInterval) {
                 let params = activeStat ? activePhoneModel : phoneModel;
                 if (null != beginTime && null != endTime) {
-                    params = Object.assign({'starttime': beginTime, 'endtime': endTime}, params)
+                    params = Object.assign({'starttime': beginTime, 'endtime': endTime}, params);
                 }
                 if (this.mock) {
-                    params = Object.assign({'statFunc': 'phoneModelStat', 'type': 0}, params)
+                    params = Object.assign({'statFunc': 'phoneModelStat', 'type': 0}, params);
                 }
                 aggregate(params)
                     .then(data => {
@@ -921,10 +913,10 @@
             appUseVersionlStat: function (beginTime = null, endTime = null, statInterval) {
                 let params = activeAppVersion;
                 if (null != beginTime && null != endTime) {
-                    params = Object.assign({'starttime': beginTime, 'endtime': endTime}, params)
+                    params = Object.assign({'starttime': beginTime, 'endtime': endTime}, params);
                 }
                 if (this.mock) {
-                    params = Object.assign({'statFunc': 'appUseVersionlStat', 'type': 0}, params)
+                    params = Object.assign({'statFunc': 'appUseVersionlStat', 'type': 0}, params);
                 }
                 aggregate(params)
                     .then(data => {

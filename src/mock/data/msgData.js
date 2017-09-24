@@ -19,7 +19,7 @@ for (let i = 0; i < 82; i++) {
         content: {
             'path|1': ['https://ws1.sinaimg.cn/large/7108d6c2ly1fguwgogowkj20gt0gtduk.jpg', 'https://cdn.theguardian.tv/webM/2015/07/20/150716YesMen_synd_768k_vp8.webm'],
             "thumbnail": ''
-        },
+        }
     }));
 }
 

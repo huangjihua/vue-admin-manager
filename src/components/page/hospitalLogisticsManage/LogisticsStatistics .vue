@@ -1,124 +1,71 @@
 <template>
     <section class="toolbar">
-        <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-            <el-form :inline="true">
-                <el-form-item>
-                    <el-date-picker
-                        v-model="beginTime"
-                        type="date"
-                        placeholder="选择日期时间"
-                        align="right"
-                        format="yyyy-MM-dd 0:0:0"
-                        :picker-options="pickerOptions1">
-                    </el-date-picker>
-                    -
-
-
-                    <el-date-picker
-                        v-model="endTime"
-                        type="date"
-                        placeholder="选择日期时间"
-                        align="right"
-                        format="yyyy-MM-dd 0:0:0"
-                        :picker-options="pickerOptions1">
-                    </el-date-picker>
-                    <el-button type="primary" v-on:click="cycleUserNumsStat">查询</el-button>
-                </el-form-item>
-            </el-form>
-        </el-col>
         <el-row :gutter="20">
-            <el-col :xs="24" :sm="24" :md="12" :lg="12">
+            <el-col :xs="24" :sm="24" :md="16" :lg="16">
                 <el-card class="box-card">
                     <div class="echarts">
-                        <IEcharts :option="cycle_mix"></IEcharts>
+                        <IEcharts :option="cycle_everyday"></IEcharts>
                     </div>
                 </el-card>
             </el-col>
-            <el-col :xs="24" :sm="24" :md="12" :lg="12">
+            <el-col :xs="24" :sm="24" :md="8" :lg="8">
                 <el-card class="box-card">
-                    <div class="echarts">
-                        <IEcharts :option="pie"></IEcharts>
+                    <div class="echarts-pie">
+                        <IEcharts :option="pie_day"></IEcharts>
                     </div>
                 </el-card>
             </el-col>
-
+        </el-row>
+        <p/>
+        <el-row :gutter="20">
+            <el-col :xs="24" :sm="24" :md="16" :lg="16">
+                <el-card class="box-card">
+                    <div class="echarts">
+                        <IEcharts :option="cycle_month"></IEcharts>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="8" :lg="8">
+                <el-card class="box-card">
+                    <div class="echarts-pie">
+                        <IEcharts :option="pie_month"></IEcharts>
+                    </div>
+                </el-card>
+            </el-col>
+        </el-row>
+        <p/>
+        <el-row :gutter="20">
+            <el-col :xs="24" :sm="24" :md="16" :lg="16">
+                <el-card class="box-card">
+                    <div class="echarts">
+                        <IEcharts :option="cycle_year"></IEcharts>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="8" :lg="8">
+                <el-card class="box-card">
+                    <div class="echarts-pie">
+                        <IEcharts :option="pie_year"></IEcharts>
+                    </div>
+                </el-card>
+            </el-col>
         </el-row>
     </section>
 </template>
 <script>
     import IEcharts from 'vue-echarts-v3/src/full.vue';
     import {aggregate} from 'api/aggregate';
-
+    import LogisticData from 'static/requestList/swissdata/logisticsStatistics.json';
     // 时间处理
     import moment from 'moment';
     export default {
         data: function () {
             return {
                 mock: true,
-                pickerOptions1: {
-                    shortcuts: [{
-                        text: '今天',
-                        onClick(picker) {
-                            picker.$emit('pick', new Date());
-                        }
-                    }, {
-                        text: '昨天',
-                        onClick(picker) {
-                            const date = moment().subtract(1, 'days').format('YYYY-MM-DD 0:0:0');
-                            picker.$emit('pick', date);
-                        }
-                    }, {
-                        text: '7天前',
-                        onClick(picker) {
-                            const date = moment().subtract(7, 'days').format('YYYY-MM-DD 0:0:0');
-                            picker.$emit('pick', date);
-                        }
-                    }, {
-                        text: '30天前',
-                        onClick(picker) {
-                            const date = moment().subtract(30, 'days').format('YYYY-MM-DD 0:0:0');
-                            picker.$emit('pick', date);
-                        }
-                    }]
-                },
-                pie: {
-                    //                color: ["#20a0ff","#61a0a8"],
+                cycle_everyday: {
+                    color: ["#13CE66", "#20a0ff"],
                     title: {
-                        text: 'android/ios用户总占比',
-                        x: 'center'
-                    },
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c} ({d}%)"
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left',
-                        data: []
-                    },
-                    series: [
-                        {
-                            name: 'Android、ios用户总占比',
-                            type: 'pie',
-                            radius: '55%',
-                            center: ['50%', '50%'],
-                            data: [],
-                            itemStyle: {
-                                emphasis: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                }
-                            }
-                        }
-                    ]
-                },
-                beginTime: '',
-                endTime: '',
-                cycle_mix: {
-                    color: ["#13CE66", "#20a0ff", "#F7BA2A"],
-                    title: {
-                        text: '用户增长趋势',
+                        text: '每日院内物流数',
                         x: 'left'
                     },
                     tooltip: {
@@ -145,25 +92,233 @@
                         data: []
                     },
                     xAxis: {
+                        type: 'category',
+                        data:[]
+                    },
+                    yAxis: {
+                        type: 'value',
                         data: []
                     },
-                    yAxis: {},
                     series: [
                         {
-                            name: "",
+                            name: "次数",
                             type: "bar",
                             data: []
                         },
                         {
-                            name: "",
+                            name: "日平均数",
+                            type: "bar",
+                            data: []
+                        }
+                    ]
+                },
+                cycle_month: {
+                    color: ["#13CE66", "#20a0ff"],
+                    title: {
+                        text: '每月院内物流数',
+                        x: 'left'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    toolbox: {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: false
+                            },
+                            restore: {
+                                show: true
+                            },
+                            saveAsImage: {
+                                show: true
+                            }
+                        }
+                    },
+                    legend: {
+                        //                        orient: 'vertical',
+                        //                        left: 'center',
+                        data: []
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data:[]
+                    },
+                    yAxis: {
+                        type: 'value',
+                        data: []
+                    },
+                    series: [
+                        {
+                            name: "次数",
                             type: "bar",
                             data: []
                         },
                         {
-                            name: "",
-                            type: "line",
+                            name: "日平均数",
+                            type: "bar",
+                            data: []
+                        }
+                    ]
+                },
+                cycle_year: {
+                    color: ["#13CE66", "#20a0ff"],
+                    title: {
+                        text: '年度院内物流数',
+                        x: 'left'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    toolbox: {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: false
+                            },
+                            restore: {
+                                show: true
+                            },
+                            saveAsImage: {
+                                show: true
+                            }
+                        }
+                    },
+                    legend: {
+                        //                        orient: 'vertical',
+                        //                        left: 'center',
+                        data: []
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data:[]
+                    },
+                    yAxis: {
+                        type: 'value',
+                        data: []
+                    },
+                    series: [
+                        {
+                            name: "次数",
+                            type: "bar",
                             data: []
                         },
+                        {
+                            name: "日平均数",
+                            type: "bar",
+                            data: []
+                        }
+                    ]
+                },
+                pie_day: {
+                    color: ["#20a0ff","#61a0a8"],
+                    title: {
+                        text: '每日 设备/人工占比',
+                        x: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ['设备','人工']
+                    },
+                    series: [
+                        {
+                            name: '设备/人工占比',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '50%'],
+                            data: [
+                                {value:120, name:'设备'},
+                                {value:50, name:'人工'}
+                            ],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                },
+                pie_month: {
+                    color: ["#20a0ff","#61a0a8"],
+                    title: {
+                        text: '月 设备/人工占比',
+                        x: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ['设备','人工']
+                    },
+                    series: [
+                        {
+                            name: '设备/人工占比',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '50%'],
+                            data: [
+                                {value:120, name:'设备'},
+                                {value:50, name:'人工'}
+                            ],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                },
+                pie_year: {
+                    color: ["#20a0ff","#61a0a8"],
+                    title: {
+                        text: '年度 设备/人工占比',
+                        x: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ['设备','人工']
+                    },
+                    series: [
+                        {
+                            name: '设备/人工占比',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '50%'],
+                            data: [
+                                {value:120, name:'设备'},
+                                {value:50, name:'人工'}
+                            ],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
                     ]
                 }
             };
@@ -187,93 +342,89 @@
             }
         },
         methods: {
-            initDate: function () {
+          initData: function () {
+              let _this = this;
+              _this.cycle_everyday.xAxis.data = [];
+              _this.cycle_everyday.series[0].data = [];
+              _this.cycle_everyday.series[1].data = [];
+              _this.cycle_month.xAxis.data = [];
+              _this.cycle_month.series[0].data = [];
+              _this.cycle_month.series[1].data = [];
+              _this.cycle_year.xAxis.data = [];
+              _this.cycle_year.series[0].data = [];
+              _this.cycle_year.series[1].data = [];
+             //日饼图 设备总数/人工
+             _this.pie_day.legend.data = [];
+             _this.pie_day.series[0].data = [];
+             _this.pie_month.legend.data = [];
+             _this.pie_month.series[0].data = [];
+             _this.pie_year.legend.data = [];
+             _this.pie_year.series[0].data = [];
+          },
+          /*院内物流数 (日/月/年)
+          * type:string day/month/year
+          * */
+          logisticNum:function(type){
+              let params = LogisticData;
 
+              if (this.mock) {
+                  params = Object.assign({'statFunc': 'logisticNum', 'type': type}, params);
+              }
+              let cycle= null; // zhuzh
+              let pie= null;
+              switch(type){
+                  case "day":
+                      cycle= this.cycle_everyday;
+                      pie = this.pie_day;
+                      break;
+                  case "month":
+                      cycle= this.cycle_month;
+                      pie = this.pie_month;
+                      break;
+                  case "year":
+                      cycle= this.cycle_year;
+                      pie = this.pie_year;
+                      break;
+              }
+
+              let total =0; //设备总数
+              let peopleNum =0; //人数
+               aggregate(params).then(data => {
+                   for (let i = 0; i< data.length; i++) {
+                      let value = data[i].num;
+                      let avg = data[i].avg;
+                      let name = data[i]._id.axisName;
+                      total +=value;
+                      // 取不到的，则直接展示渠道编码
+
+                       cycle.legend.data=['数量','平均数'];
+                       cycle.series[0].name = cycle.legend.data[0];
+                       cycle.series[1].name = cycle.legend.data[1];
+                       cycle.xAxis.data.push(name);
+                       cycle.series[0].data.push(value);
+                       cycle.series[1].data.push(avg);
+                  }
+                    //日占比图数据
+                  pie.legend.data = ['设备','人工'];
+                  pie.series[0].data=[{value:total,name:'设备'},{value:cycle.series[0].data[3],name:'人工'}];
+               });
+            },
+          statAll: function () {
                 let _this = this;
+                // 统计前初始化数据先，新增统计需要在此配置好初始化
+                _this.initData();
+                // 日统计
+                _this.logisticNum('day');
+                // 月统计
+                _this.logisticNum('month');
+                // 年统计
+               _this.logisticNum('year');
+               //  统计和总数占比
 
-                _this.pie.legend.data = [];
-                _this.pie.series[0].data = [];
-
-                _this.cycle_mix.xAxis.data = [];
-
-                // android的用户数
-                _this.cycle_mix.series[0].data = [];
-
-                // ios的用户数ios
-                _this.cycle_mix.series[1].data = [];
-
-                // android 及 ios的用户数
-                _this.cycle_mix.series[2].data = [];
-            },
-            /**
-             * 统计7天内的用户增长情况
-             */
-            cycleUserNumsStat: function () {
-                let params = monthUserNumsReq;
-                if (null != this.beginTime && null != this.endTime) {
-
-                    let starttime = moment(this.beginTime).format('YYYY-MM-DD 0:0:0');
-                    let endtime = moment(this.endTime).format('YYYY-MM-DD 0:0:0');
-
-
-                    params = Object.assign({'starttime': starttime, 'endtime': endtime}, params)
-                }
-                if (this.mock) {
-                    params = Object.assign({'statFunc': 'cycleUserNumsStat', 'type': 0}, params)
-                }
-                this.initDate();
-                aggregate(params)
-                    .then(data => {
-                    this.cycle_mix.legend.data = ['Android', 'ios', '总数'];
-                this.cycle_mix.series[0].name = 'Android';
-                this.cycle_mix.series[1].name = 'ios';
-                this.cycle_mix.series[2].name = '总数';
-
-                let dateNum = moment(this.endTime).diff(moment(this.beginTime), 'days')
-
-                for (let j = dateNum; j > 0; j--) {
-
-                    let tododay = moment(this.endTime).subtract(j, 'days').format('YYYY-MM-DD');
-
-                    this.cycle_mix.xAxis.data.push(tododay);
-
-                    let androidNum = 0;
-                    let iosNum = 0;
-                    for (let i = data.length - 1; i >= 0; i--) {
-
-                        let day = data[i]._id.day;
-                        let deviceType = data[i]._id.deviceType;
-                        let num = data[i].num;
-
-                        if (day == tododay) {
-
-                            if (1 == deviceType) {
-                                androidNum = num;
-
-                            } else if (2 == deviceType) {
-                                iosNum = num;
-                            }
-                        }
-                    }
-
-                    // android的用户数
-                    this.cycle_mix.series[0].data.push(androidNum);
-
-                    // ios的用户数ios
-                    this.cycle_mix.series[1].data.push(iosNum);
-
-                    // android 及 ios的用户数
-                    this.cycle_mix.series[2].data.push(androidNum + iosNum);
-                }
-            });
-
-            },
-        },
+            }
+      },
         mounted: function () {
-            this.beginTime = moment().subtract(7, 'days').format('YYYY-MM-DD 0:0:0');
-            this.endTime = moment().format('YYYY-MM-DD 0:0:0');
-
-            this.cycleUserNumsStat();
+            this.statAll();
         }
     };
 </script>
@@ -281,15 +432,20 @@
 <style scoped>
     .echarts {
         float: left;
-        width: 500px;
+        width: 600px;
         height: 400px;
     }
+    .echarts-pie{
+        float: left;
+        width: 300px;
+        height: 200px;
+    }
     .c-charts {
-        height: 500px;
+        height: 400px;
         width: 100%;
     }
     .mix-echarts {
         width: 100%;
-        height: 600px;
+        height: 500px;
     }
 </style>

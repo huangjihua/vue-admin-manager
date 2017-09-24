@@ -14,7 +14,9 @@ import AutoReplyCfg from './components/page/operation/AutoReplyCfg.vue';
 import FrisNumCycleCharts from './components/page/friends/stat/FrisNumCycleCharts.vue';
 import MsgNumCycleCharts from './components/page/msg/stat/MsgNumCycleCharts.vue';
 import GeoUserNumCityRanked from './components/page/userDataStat/GeoUserNumCityRanked.vue';
+
 import  logisticsStatistics from './components/page/hospitalLogisticsManage/LogisticsStatistics .vue'
+import  drugConsumablesCharts from './components/page/hospitalLogisticsManage/DrugAndConsumablesCharts.vue'
 
 let routes = [
     {
@@ -103,7 +105,9 @@ let routes = [
         name: '医院物流管理',
         iconCls: 'el-icon-date',
         children:[
-            {path: '/logisticsStatistics', component: logisticsStatistics, name: '物流数统计'}
+            {path: '/logisticsStatistics', component: logisticsStatistics, name: '物流数统计'},
+            {path:'/drugConsumablesCharts',component: drugConsumablesCharts,name:'药品与耗材平均值图表'},
+            {path:'/equipmentAccessTimesCharts',component: null,name:'设备进出统计表'}
         ]
     },
     {
