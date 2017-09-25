@@ -103,14 +103,20 @@
                     },
                     series: [
                         {
-                            name: "次数",
+                            name: "数量",
                             type: "bar",
-                            data: []
-                        },
-                        {
-                            name: "日平均数",
-                            type: "bar",
-                            data: []
+                            data: [],
+                            markLine:{
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ],
+                                lineStyle:{
+                                    normal:{
+                                        color:"red",
+                                        opacity:0.5
+                                    }
+                                }
+                            }
                         }
                     ]
                 },
@@ -153,14 +159,20 @@
                     },
                     series: [
                         {
-                            name: "次数",
+                            name: "数量",
                             type: "bar",
-                            data: []
-                        },
-                        {
-                            name: "日平均数",
-                            type: "bar",
-                            data: []
+                            data: [],
+                            markLine:{
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ],
+                                lineStyle:{
+                                    normal:{
+                                        color:"red",
+                                        opacity:0.5
+                                    }
+                                }
+                            }
                         }
                     ]
                 },
@@ -203,14 +215,20 @@
                     },
                     series: [
                         {
-                            name: "次数",
+                            name: "数量",
                             type: "bar",
-                            data: []
-                        },
-                        {
-                            name: "日平均数",
-                            type: "bar",
-                            data: []
+                            data: [],
+                            markLine:{
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ],
+                                lineStyle:{
+                                    normal:{
+                                        color:"red",
+                                        opacity:0.5
+                                    }
+                                }
+                            }
                         }
                     ]
                 },
@@ -245,6 +263,7 @@
                     },
                     xAxis: {
                         type: 'category',
+                        axisLabel:{interval:0},
                         data:[]
                     },
                     yAxis: {
@@ -253,14 +272,27 @@
                     },
                     series: [
                         {
-                            name: "次数",
+                            name: "数量",
                             type: "bar",
-                            data: []
+                            data: [],
+                            markLine:{
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ],
+                                lineStyle:{
+                                    normal:{
+                                        color:"red",
+                                        opacity:0.5
+                                    }
+                                }
+                            }
                         },
                         {
-                            name: "日平均数",
-                            type: "bar",
-                            data: []
+                            name: 'GDP占比',
+                            type: 'pie',
+                            center: ['75%', '35%'],
+                            radius: '28%',
+                            z: 100
                         }
                     ]
                 }
@@ -281,19 +313,19 @@
                 let _this = this;
                 _this.drug_week.xAxis.data = [];
                 _this.drug_week.series[0].data = [];
-                _this.drug_week.series[1].data = [];
+
 
                 _this.drug_month.xAxis.data = [];
                 _this.drug_month.series[0].data = [];
-                _this.drug_month.series[1].data = [];
+
 
                 _this.drug_week_top_ten.xAxis.data = [];
                 _this.drug_week_top_ten.series[0].data = [];
-                _this.drug_week_top_ten.series[1].data = [];
+
 
                 _this.drug_month_top_ten.xAxis.data = [];
                 _this.drug_month_top_ten.series[0].data = [];
-                _this.drug_month_top_ten.series[1].data = [];
+
             },
             loadDataCharts:function(type,dateType){
                 let params = LogisticData;
@@ -321,12 +353,10 @@
                         let avg = data[key].avg;
                         let name = data[key]._id.axisName;
                         // 取不到的，则直接展示渠道编码
-                        cycle.legend.data=['数量','平均数'];
+                        cycle.legend.data=['数量'];
                         cycle.series[0].name = cycle.legend.data[0];
-                        cycle.series[1].name = cycle.legend.data[1];
                         cycle.xAxis.data.push(name);
                         cycle.series[0].data.push(value);
-                        cycle.series[1].data.push(avg);
                       }
                });
             },

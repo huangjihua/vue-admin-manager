@@ -98,7 +98,13 @@ const YearLogisticList = {
         }
     ]
 };
-
 /*药品和耗材 每周/月/ [top10/周/月]*/
 
-export  {TodayLogisticList,MonthLogisticList,YearLogisticList}
+
+export  {
+    TodayLogisticList,MonthLogisticList,YearLogisticList
+}
+
+
+
+

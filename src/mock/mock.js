@@ -4,6 +4,7 @@
 
 import axios from 'axios';
 import fetch from '../utils/fetch';
+import {formatDrug,GetRandomNum} from '../utils/logistic';
 import MockAdapter from 'axios-mock-adapter';
 import {Token, LoginUsers, Users} from './data/users';
 let _Users = Users;
@@ -27,7 +28,9 @@ import {
     StatActiveVer
 } from './data/dashboard';
 import {addUserTrend, ActiveUserTrend, UserRelationThrend, UserMsgThrend} from './data/trendData';
-import {TodayLogisticList, MonthLogisticList,YearLogisticList} from './data/logisticData';
+import {
+    TodayLogisticList, MonthLogisticList,YearLogisticList 
+} from './data/logisticData';
 
 export default  {
     /**
@@ -149,16 +152,17 @@ export default  {
                 if('loadDataCharts' === statFunc){
                     switch (type) {
                         case 'week':
-                            Res = TodayLogisticList;
+                            //Res = DrugLogisticList;
+                            Res = formatDrug(15,10,300);
                             break;
                         case 'month':
-                            Res = MonthLogisticList;
+                            Res = formatDrug(15,80,1000);
                             break;
                         case 'week_top_ten':
-                            Res =  YearLogisticList;
+                            Res = formatDrug(10,30,300);
                             break;
                         case 'month_top_ten':
-                            Res =  YearLogisticList;
+                            Res =  formatDrug(10,100,1000);
                             break;
                     }
                 }
