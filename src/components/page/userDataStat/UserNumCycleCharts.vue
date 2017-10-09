@@ -19,8 +19,6 @@
                         :picker-options="pickerOptions1">
                     </el-date-picker>
                     -
-
-
                     <el-date-picker
                         v-model="endTime"
                         type="date"

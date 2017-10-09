@@ -2,7 +2,7 @@
     <section class="toolbar">
         <section class="content">
             <el-row :gutter="20">
-                    <el-radio-group v-model="radio3" fill="rgba(255,0,30,0.75)" >
+                    <el-radio-group v-model="radio3" fill="rgba(255,0,30,0.75)"  v-on:change="statAll" >
                         <el-radio-button label="drug">药品</el-radio-button>
                         <el-radio-button label="consumable">耗材</el-radio-button>
                     </el-radio-group>
@@ -58,14 +58,15 @@
     import IEcharts from 'vue-echarts-v3/src/full.vue';
     import {aggregate} from 'api/aggregate';
     import LogisticData from 'static/requestList/swissdata/logisticsStatistics.json';
-
+    // 时间处理
+    import moment from 'moment';
     export default{
         data(){
             return {
                 mock: true,
                 radio3: 'drug',
                 drug_week: {
-                    color: ["#13CE66", "#20a0ff"],
+                    color: ["#FF4500", "#20a0ff"],
                     title: {
                         text: '药品趋势图/周',
                         x: 'left'
@@ -116,12 +117,17 @@
                                         opacity:0.5
                                     }
                                 }
+                            },
+                            itemStyle:{
+                                normal:{
+                                    barBorderRadius:[10, 10, 0, 0]
+                                }
                             }
-                        }
+                        },
                     ]
                 },
                 drug_month: {
-                    color: ["#13CE66", "#20a0ff"],
+                    color: ["#FFB6C1", "#20a0ff"],
                     title: {
                         text: '药品趋势图/周',
                         x: 'left'
@@ -171,15 +177,20 @@
                                         color:"red",
                                         opacity:0.5
                                     }
+                                }
+                            },
+                            itemStyle:{
+                                normal:{
+                                    barBorderRadius:[10, 10, 10, 10]
                                 }
                             }
                         }
                     ]
                 },
                 drug_week_top_ten: {
-                    color: ["#13CE66", "#20a0ff"],
+                    color: ["#7B68EE", "#20a0ff"],
                     title: {
-                        text: '药品趋势图/周',
+                        text: '药品趋势图/周 Top10',
                         x: 'left'
                     },
                     tooltip: {
@@ -228,14 +239,19 @@
                                         opacity:0.5
                                     }
                                 }
+                            },
+                            itemStyle:{
+                                normal:{
+                                    barBorderRadius:[10, 10, 10, 10]
+                                }
                             }
                         }
                     ]
                 },
                 drug_month_top_ten: {
-                    color: ["#13CE66", "#20a0ff"],
+                    color: ["#FF1493", "#20a0ff"],
                     title: {
-                        text: '药品趋势图/月',
+                        text: '药品趋势图/月 Top10',
                         x: 'left'
                     },
                     tooltip: {
@@ -285,6 +301,11 @@
                                         opacity:0.5
                                     }
                                 }
+                            },
+                            itemStyle:{
+                                normal:{
+                                    barBorderRadius:[10, 10, 10, 10]
+                                }
                             }
                         },
                         {
@@ -298,18 +319,27 @@
                 }
             }
         },
+        filters: {
+            // 格式化数字
+            numFormat(num)
+            {
+                let result = '';
+                num = (num || 0).toString();
+                while (num.length > 3) {
+                    result = ',' + num.slice(-3) + result;
+                    num = num.slice(0, num.length - 3);
+                }
+                if (num) {
+                    result = num + result;
+                }
+                return result;
+            }
+        },
         components : {
             IEcharts
         },
         methods:{
-            initData:function(type){
-                switch(type){
-                    case 'drug':
-                        break;
-                    case 'consumable':
-                        break;
-                }
-
+            initData:function(){
                 let _this = this;
                 _this.drug_week.xAxis.data = [];
                 _this.drug_week.series[0].data = [];
@@ -327,10 +357,10 @@
                 _this.drug_month_top_ten.series[0].data = [];
 
             },
-            loadDataCharts:function(type,dateType){
+            loadDataCharts:function(product,dateType){
                 let params = LogisticData;
                 if (this.mock) {
-                    params = Object.assign({'statFunc': 'loadDataCharts', 'type': dateType}, params);
+                    params = Object.assign({'statFunc': 'loadDataCharts', 'type': dateType,'other':product}, params);
                 }
                 let cycle= null;
                 switch(dateType){
@@ -359,22 +389,26 @@
                         cycle.series[0].data.push(value);
                       }
                });
+                cycle.series[0].itemStyle.normal.barBorderRadius= [10,10,0,0];
             },
             statAll:function () {
                 let _this = this;
+             
+                console.log(_this.radio3);
                 // 统计前初始化数据先，新增统计需要在此配置好初始化
-                _this.initData('drug');
+                _this.initData(_this.radio3);
                 // week统计
-                _this.loadDataCharts('drug','week');
+                _this.loadDataCharts(_this.radio3,'week');
                 // 月统计
-                _this.loadDataCharts('drug','month');
+                _this.loadDataCharts(_this.radio3,'month');
                 // week_top_ten 统计
-                _this.loadDataCharts('drug','week_top_ten');
+                _this.loadDataCharts(_this.radio3,'week_top_ten');
                 // month_top_ten 统计
-                _this.loadDataCharts('drug','month_top_ten');
+                _this.loadDataCharts(_this.radio3,'month_top_ten');
             }
         },
         mounted: function () {
+            console.log(this.radio3);
             this.statAll();
         }
     }

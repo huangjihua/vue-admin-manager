@@ -4,7 +4,7 @@
 
 import axios from 'axios';
 import fetch from '../utils/fetch';
-import {formatDrug,GetRandomNum} from '../utils/logistic';
+import {formatDrug,equipentAccessData,coreLogisticData} from '../utils/logistic';
 import MockAdapter from 'axios-mock-adapter';
 import {Token, LoginUsers, Users} from './data/users';
 let _Users = Users;
@@ -29,7 +29,7 @@ import {
 } from './data/dashboard';
 import {addUserTrend, ActiveUserTrend, UserRelationThrend, UserMsgThrend} from './data/trendData';
 import {
-    TodayLogisticList, MonthLogisticList,YearLogisticList 
+    TodayLogisticList, MonthLogisticList,YearLogisticList
 } from './data/logisticData';
 
 export default  {
@@ -59,11 +59,8 @@ export default  {
 
         // 各种统计
         mock_fetch.onPost('/charts/v1/aggregate').reply(config => {
-
-                let {statFunc, type} = JSON.parse(config.data);
-
+                let {statFunc, type,other} = JSON.parse(config.data);
                 let Res = '';
-
                 if ('devTypeStat' === statFunc) {
                     switch (type) {
                         case 0:
@@ -134,6 +131,7 @@ export default  {
                 if ('cycleMsgNumStat' === statFunc) {
                     Res = UserMsgThrend;
                 }
+
                 //院内物流数
                 if('logisticNum' === statFunc){
                     switch (type) {
@@ -152,22 +150,32 @@ export default  {
                 if('loadDataCharts' === statFunc){
                     switch (type) {
                         case 'week':
-                            //Res = DrugLogisticList;
-                            Res = formatDrug(15,10,300);
+                            Res = formatDrug(other,15,10,300);
                             break;
                         case 'month':
-                            Res = formatDrug(15,80,1000);
+                            Res = formatDrug(other,15,80,1000);
                             break;
                         case 'week_top_ten':
-                            Res = formatDrug(10,30,300);
+                            Res = formatDrug(other,10,30,300,'asc');
                             break;
                         case 'month_top_ten':
-                            Res =  formatDrug(10,100,1000);
+                            debugger;
+                            Res =  formatDrug(other,10,100,1000,'asc');
                             break;
                     }
                 }
 
+                if('technicalOfficesModel'=== statFunc){
+                    // debugger;
+                    Res = equipentAccessData(type,other,1,500);
+                }
+                if('coreLogisticModel'=== statFunc){
+                    // debugger;
+                    Res =coreLogisticData(type,other,1,500);
 
+                    // console.log('tet');
+
+                }
 
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {

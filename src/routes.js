@@ -17,7 +17,8 @@ import GeoUserNumCityRanked from './components/page/userDataStat/GeoUserNumCityR
 
 import  logisticsStatistics from './components/page/hospitalLogisticsManage/LogisticsStatistics .vue'
 import  drugConsumablesCharts from './components/page/hospitalLogisticsManage/DrugAndConsumablesCharts.vue'
-
+import equipmentAccessTimesCharts from './components/page/hospitalLogisticsManage/equipmentAccessTimesCharts.vue'
+import coreLogisticsStatistics from './components/page/hospitalLogisticsManage/coreLogisticStatistics.vue'
 let routes = [
     {
         path: '/login',
@@ -107,7 +108,8 @@ let routes = [
         children:[
             {path: '/logisticsStatistics', component: logisticsStatistics, name: '物流数统计'},
             {path:'/drugConsumablesCharts',component: drugConsumablesCharts,name:'药品与耗材平均值图表'},
-            {path:'/equipmentAccessTimesCharts',component: null,name:'设备进出统计表'}
+            {path:'/equipmentAccessTimesCharts',component: equipmentAccessTimesCharts,name:'设备进出统计表'},
+            {path:'/coreLogisticsStatistics',component: coreLogisticsStatistics,name:'全院核心物流统计'}
         ]
     },
     {
