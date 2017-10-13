@@ -13,7 +13,7 @@ const consumable = ["产包","导尿管","手术包","中心静脉导管包","�
     "灌肠包","急救包","引流包","呼吸道管包","导管系列","肛管","鼻饲管","创可贴","生物敷料","婴儿护脐敷料","外科手术胶带","透气胶带",
     "输液胶贴","留置针胶贴","医用纱布","弹性绷带","腹带、压力袜","石膏绷带","骨科高分子喝茶矫形绷带","注射针","输液器","输液配件","胰岛素注射器"
 ];
-const OfficeType =[
+export const OfficeType =[
     {
     value: '1001',
     label: '内科'
@@ -34,7 +34,7 @@ const OfficeType =[
         value: '1006',
         label: '心内科'
     }]; //科室
-const equipmentType=[{ label:"PTS",value:1},{label:"ETV",value:2},{label:"AVG",value:3},{label:"人工",value:4}];//设备类型
+export const equipmentType=[{ label:"PTS",value:1},{label:"ETV",value:2},{label:"AVG",value:3},{label:"人工",value:4}];//设备类型
 const operator=[{name:'hank',sex:1},{name:'lila',sex:0},{name:'lemon',sex:1}]; /*操作人员*/
 const product = [
     {label:'PIVAS',id:'p1',list:[]},  {label:'PIVAS',id:'p1',list:[]},
@@ -44,7 +44,14 @@ const product = [
     {label:'衣服',id:'p5',list:[]}, {label:'衣服',id:'p5',list:[]},
     {label:'厨房',id:'p6',list:[]}, {label:'厨房',id:'p6',list:[]}
 ];
-
+export const products =  [
+    {label:'PIVAS',id:'p1'},
+    {label:'药房',id:'p2'},
+    {label:'检验',id:'p3'},
+    {label:'CSSD',id:'p4'},
+    {label:'衣服',id:'p5'},
+    {label:'厨房',id:'p6'}
+];
 /**
  * 随机生成药
  * @param forNum  循环次数 {number
@@ -101,9 +108,9 @@ export function equipentAccessData(date,technicalValue,min,max) {
     let eData = {"result": []};
     // debugger;
 
-
-    let advanceTime = moment(date,'YYYY-MM-DD HH:mm');
-
+    console.log('date:'+date);
+    let advanceTime = moment(date,'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm');
+    console.log(advanceTime);
     for (let i = 0; i < 24; i++) {
         let  index=  GetRandomNum(0, equipmentType.length-1);
         eData.result.push({
@@ -116,8 +123,8 @@ export function equipentAccessData(date,technicalValue,min,max) {
             intNum: GetRandomNum(min, max),
             outNum: GetRandomNum(-max, -min)
         });
-        advanceTime = moment(advanceTime,'YYYY-MM-DD HH:mm').subtract(-30, 'minute');
-        console.log(advanceTime);
+        advanceTime = moment(advanceTime).subtract(-1, 'hour').format('YYYY-MM-DD HH:mm');
+        console.log('a:'+advanceTime);
     }
 
     // Array.from(eData,function (x) {
@@ -141,11 +148,13 @@ export function coreLogisticData(date,technicalValue,min,max) {
     console.log('result');
     for(let key in product){
         eData.result.push(product[key]);
+        eData.result[key].list=[];
         for (let i = 0; i <24; i++) {
             let  index=  GetRandomNum(0, equipmentType.length-1);
             eData.result[key].list.push({
                 _id: {
                     axisName: equipmentType[index].label,
+                    equipmentType:equipmentType[index].value,
                     type: technicalValue, /* equipmentType[index].value,*/ /* pts etv avg at*/
                     date: i
                 },

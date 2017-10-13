@@ -2,7 +2,13 @@
     <el-row class="blu-container">
         <el-col :span="24" class="header">
             <el-col :span="10" class="logo" :class="isCollapse?'logo-collapse-width':'logo-width'">
-                {{isCollapse ? '' : sysName }}
+                <!--{{isCollapse ? '' : sysName }}-->
+                <!--<template v-if="!isCollapse">-->
+                    <!--<img src="../../assets/swisslog.png">-->
+                <!--</template>-->
+               <!--<template v-if="isCollapsed">-->
+                   <!--<img src="../../assets/swisslog-min.png">-->
+               <!--</template>-->
             </el-col>
             <el-col :span="10">
                 <div class="tools"  @click.prevent="collapse">
@@ -86,7 +92,7 @@
     export default {
         data() {
             return {
-                sysName: '医院后台管理',
+                sysName:'',
                 isCollapse: false,
 //                nickname: '',
                 sysUserAvatar: avatar,
@@ -231,7 +237,7 @@
                 border-right-width: 1px;
                 border-right-style: solid;
                 img {
-                    width: 40px;
+                    /*width: 40px;*/
                     float: left;
                     margin: 10px 10px 10px 18px;
                 }
@@ -241,9 +247,11 @@
             }
             .logo-width {
                 width: 230px;
+                background:  url("../../assets/swisslog.png") center no-repeat;
             }
             .logo-collapse-width {
-                width: 60px
+                width: 60px;
+                background: url("../../assets/swisslog-min.png") center no-repeat;
             }
             .tools {
                 padding: 0px 23px;

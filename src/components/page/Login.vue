@@ -78,7 +78,9 @@
                                 localStorage.setItem('token', token);
                                 localStorage.setItem('account', account);
                                 localStorage.setItem('expiration', expiration);
-                                self.$router.push('/dashboard');
+//                                self.$router.push('/dashboard');
+                                self.$router.push('/logisticsStatistics');
+                                
                             }
                         }).catch((e) => {
                             let {_error} = e;
@@ -121,5 +123,10 @@
         .remember {
             margin: 0px 0px 35px 0px;
         }
+        .el-button--primary{
+            background-color: rgba(255, 0, 30, 0.75);
+            border-color: rgba(255, 0, 30, 0.75)
+        }
+        
     }
 </style>

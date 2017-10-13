@@ -9,11 +9,11 @@
                     align="right"
                     :picker-options="pickerOptions2"
                     placeholder="选择日前"
-                    :change="statAll"
+                    v-on:change="statAll"
                 >
                 </el-date-picker>
                 <span class="demonstration">科室:</span>
-                <el-select v-model="technicalValue" v-on:change="">
+                <el-select v-model="technicalValue" v-on:change="statAll">
                     <el-option
                         v-for="item in technicalOffices"
                         :label="item.label"
@@ -25,51 +25,65 @@
         </el-row>
         <p/>
         <el-row :gutter="20">
-            <el-col :xs="24" :sm="24" :md="16" :lg="16">
+            <el-col :xs="24" :sm="24" :md="14" :lg="14">
                 <el-card class="box-card">
                     <div class="echarts">
-                        <IEcharts :option="cycle_everyday"></IEcharts>
+                        <IEcharts :option="firstLeftChart"></IEcharts>
                     </div>
                 </el-card>
             </el-col>
-            <el-col :xs="24" :sm="24" :md="8" :lg="8">
+            <el-col :xs="24" :sm="24" :md="10" :lg="10">
                 <el-card class="box-card">
-                    <div class="echarts-pie">
-                        <IEcharts :option="pie_day"></IEcharts>
+                    <div class="echarts">
+                        <IEcharts :option="firstRightChart"></IEcharts>
                     </div>
                 </el-card>
             </el-col>
         </el-row>
         <p/>
         <el-row :gutter="20">
-            <el-col :xs="24" :sm="24" :md="16" :lg="16">
+            <div class="block">
+                <span class="demonstration">选择时间类型:</span>
+                <el-select v-model="dateTypeValue" v-on:change="statSendAll">
+                    <el-option
+                        v-for="item in dateType"
+                        :label="item.label"
+                        :value="item.value"
+                        :disabled="item.disabled">
+                    </el-option>
+                </el-select>
+            </div>
+        </el-row>
+        <p/>
+        <el-row :gutter="20">
+            <el-col :xs="24" :sm="24" :md="14" :lg="14">
                 <el-card class="box-card">
                     <div class="echarts">
-                        <IEcharts :option="cycle_month"></IEcharts>
+                        <IEcharts :option="twoLeftChart"></IEcharts>
                     </div>
                 </el-card>
             </el-col>
-            <el-col :xs="24" :sm="24" :md="8" :lg="8">
+            <el-col :xs="24" :sm="24" :md="10" :lg="10">
                 <el-card class="box-card">
-                    <div class="echarts-pie">
-                        <IEcharts :option="pie_month"></IEcharts>
+                    <div class="echarts">
+                        <IEcharts :option="twoRightChart"></IEcharts>
                     </div>
                 </el-card>
             </el-col>
         </el-row>
         <p/>
         <el-row :gutter="20">
-            <el-col :xs="24" :sm="24" :md="16" :lg="16">
+            <el-col :xs="24" :sm="24" :md="14" :lg="14">
                 <el-card class="box-card">
                     <div class="echarts">
-                        <IEcharts :option="cycle_year"></IEcharts>
+                        <IEcharts :option="thirdLeftChart"></IEcharts>
                     </div>
                 </el-card>
             </el-col>
-            <el-col :xs="24" :sm="24" :md="8" :lg="8">
+            <el-col :xs="24" :sm="24" :md="10" :lg="10">
                 <el-card class="box-card">
-                    <div class="echarts-pie">
-                        <IEcharts :option="pie_year"></IEcharts>
+                    <div class="echarts">
+                        <IEcharts :option="thirdRightChart"></IEcharts>
                     </div>
                 </el-card>
             </el-col>
@@ -79,8 +93,8 @@
 <script>
     import IEcharts from 'vue-echarts-v3/src/full.vue';
     import {aggregate} from 'api/aggregate';
+    import {OfficeType,equipmentType,products,GetRandomNum} from 'utils/logistic';
     import coreLogisticModel from 'static/requestList/swissdata/coreLogisticModel.json';
-    import LogisticData from 'static/requestList/swissdata/logisticsStatistics.json';
     // 时间处理
     import moment from 'moment';
     export default {
@@ -115,6 +129,22 @@
                         }]
                 },
                 dateValue: '',
+                dateType:[
+                    {
+                        value:1,
+                        label:'周'
+                    },
+                    {
+                        value:2,
+                        label:'月'
+                    },
+                    {
+                        value:3,
+                        label:'年'
+                    }
+                    
+                ],
+                dateTypeValue:'',
                 technicalOffices: [
                     {
                         value: '1001',
@@ -134,7 +164,7 @@
                         label: '胸内科'
                     }],
                 technicalValue: '1002',
-                cycle_everyday: {
+                firstLeftChart: {
                     color: ["#FF4500", "#20a0ff","#2E8B57","#FFFF00","#ADFF2F","#FFA500","#FFE4B5","#8B4513","#FFF5EE","#696969","#00CED1","#FF4500"],
                     title: {
                         text: '进出数统计',
@@ -144,10 +174,59 @@
                         trigger: 'axis'
                     },
                     legend: {
+                        type: 'plain',
+                        orient: 'vertical',
+                        right: 0,
+                        top: 60,
+                        bottom: 20,
                         data:[]
                     },
                     toolbox: {
-                        show: true,
+                        show: false,
+                        feature: {
+                            dataZoom: {
+                                yAxisIndex: 'none'
+                            },
+                            dataView: {readOnly: false},
+                            magicType: {type: ['line', 'bar']},
+                            restore: {},
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis:  {
+                        type: 'category',
+                        boundaryGap: true,
+                        data: [],
+                        axisLabel: {
+                            formatter: '{value}/h'
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    series: []
+                },
+                firstRightChart: {
+                    color: ["#13CE66", "#20a0ff","#2E8B57","#FFFF00"],
+                    title: {
+                        text: '设备/人工',
+                        subtext: ''
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        type: 'plain',
+//                        orient: 'vertical',
+                        top:30,
+                        right:10,
+                        data: ['设备/进','设备/出','人工／进','人工／出']
+                    },
+                    toolbox: {
+                        show: false,
                         feature: {
                             dataZoom: {
                                 yAxisIndex: 'none'
@@ -172,70 +251,104 @@
                             formatter: '{value}'
                         }
                     },
-                    series: [
-//                        {
-//                            name:'',
-//                            type:'line',
-//                            data:[],
-//                            markPoint: {
-//                                data: [
-//                                    {type: 'max', name: '最大值'},
-//                                    {type: 'min', name: '最小值'}
-//                                ]
-//                            },
-//                            markLine: {
-//                                data: [
-//                                    {type: 'average', name: '平均值'}
-//                                ]
-//                            },
-//                            itemStyle:{
-//                                normal:{
-//                                    barBorderRadius:[10, 10, 0, 0]
-//                                }
-//                            }
-//                        },
-//                        {
-//                            name:'',
-//                            type:'line',
-//                            data:[],
-//                            markPoint: {
-//                                data: [
-//                                    {type: 'max', name: '最大值'},
-//                                    {type: 'min', name: '最小值'}
-//                                ]
-//                            },
-//                            markLine: {
-//                                data: [
-//                                    {type: 'average', name: '平均值'},
-//                                    [{
-//                                        symbol: 'none',
-//                                        x: '90%',
-//                                        yAxis: 'max'
-//                                    }, {
-//                                        symbol: 'circle',
-//                                        label: {
-//                                            normal: {
-//                                                position: 'start',
-//                                                formatter: '最大值'
-//                                            }
-//                                        },
-//                                        type: 'max',
-//                                        name: '最高点'
-//                                    }]
-//                                ]
-//                            },
-//                            itemStyle:{
-//                                normal:{
-//                                    barBorderRadius:[0, 0, 10, 10]
-//                                }
-//                            }
-//                        },x
-                    ]
+                    series: []
                 },
-                cycle_month: {
+                twoLeftChart: {
+                    color: ['#003366', '#006699', '#4cabce', '#e5323e',"#ADFF2F","#FFA500"],
+                    title: {
+                        text: '有效发送排行',
+                        subtext: ''
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    legend: {
+                        type: 'plain',
+//                        orient: 'vertical',
+                        top:30,
+                        right:10,
+                        data: []
+                    },
+                    toolbox: {
+                        show: false,
+                        orient: 'vertical',
+                        left: 'right',
+                        top: 'center',
+                        feature: {
+                            mark: {show: true},
+                            dataView: {show: true, readOnly: false},
+                            magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                            restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    calculable: true,
+                    xAxis: {
+                        type: 'category',
+                        axisTick: {show: true},
+                        data:[],
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    },
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: []
+                },
+                twoRightChart: {
                     color: ["#13CE66", "#20a0ff"],
                     title: {
-                        text: '每月院内物流数',
+                        text: '设备/人工',
+                        subtext: ''
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    legend: {
+                        type:'plain',
+                        orient: 'vertical',
+                        right:0,
+                        data: ['设备','人工']
+                    },
+                    toolbox: {
+                        show: false,
+                        orient: 'vertical',
+                        left: 'right',
+                        top: 'center',
+                        feature: {
+                            mark: {show: true},
+                            dataView: {show: true, readOnly: false},
+                            magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                            restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    calculable: true,
+                    xAxis: {
+                        type: 'category',
+                        axisTick: {show: false},
+                        data: [],
+                     },
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: []
+                },
+                thirdLeftChart: {
+                    color: ["#FFE4B5","#8B4513","#FFF5EE","#696969","#00CED1","#FF4500"],
+                    title: {
+                        text: '有效接收排行',
                         x: 'left'
                     },
                     tooltip: {
@@ -259,8 +372,10 @@
                         }
                     },
                     legend: {
-                        //                        orient: 'vertical',
-                        //                        left: 'center',
+                        type: 'plain',
+//                        orient: 'vertical',
+                        top:30,
+                        right:30,
                         data: []
                     },
                     xAxis: {
@@ -294,11 +409,11 @@
                         }
                     ]
                 },
-                cycle_year: {
-                    color: ["#13CE66", "#20a0ff"],
+                thirdRightChart: {
+                    color: ["#2E8B57","#FFFF00"],
                     title: {
-                        text: '年度院内物流数',
-                        x: 'left'
+                        text: '设备/人工',
+                        subtext: ''
                     },
                     tooltip: {
                         trigger: 'axis',
@@ -306,161 +421,39 @@
                             type: 'shadow'
                         }
                     },
+                    legend: {
+                        type:'plain',
+                        orient: 'vertical',
+                        right:0,
+                        data: ['设备','人工']
+                    },
                     toolbox: {
+                        show: false,
+                        orient: 'vertical',
+                        left: 'right',
+                        top: 'center',
                         feature: {
-                            dataView: {
-                                show: true,
-                                readOnly: false
-                            },
-                            restore: {
-                                show: true
-                            },
-                            saveAsImage: {
-                                show: true
-                            }
+                            mark: {show: true},
+                            dataView: {show: true, readOnly: false},
+                            magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                            restore: {show: true},
+                            saveAsImage: {show: true}
                         }
                     },
-                    legend: {
-                        //                        orient: 'vertical',
-                        //                        left: 'center',
-                        data: []
-                    },
+                    calculable: true,
                     xAxis: {
                         type: 'category',
-                        data:[]
+                        axisTick: {show: false},
+                        data: [],
                     },
-                    yAxis: {
-                        type: 'value',
-                        data: []
-                    },
-                    series: [
+                    yAxis: [
                         {
-                            name: "次数",
-                            type: "bar",
-                            data: [],
-                            itemStyle:{
-                                normal:{
-                                    barBorderRadius:[]
-                                }
-                            }
-                        },
-                        {
-                            name: "日平均数",
-                            type: "bar",
-                            data: [],
-                            itemStyle:{
-                                normal:{
-                                    barBorderRadius:[]
-                                }
-                            }
+                            type: 'value'
                         }
-                    ]
+                    ],
+                    series: []
                 },
-                pie_day: {
-                    color: ["#13CE66", "#20a0ff"],
-                    title: {
-                        text: '每日 设备/人工占比',
-                        x: 'center'
-                    },
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c} ({d}%)"
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left',
-                        data: ['设备','人工']
-                    },
-                    series: [
-                        {
-                            name: '设备/人工占比',
-                            type: 'pie',
-                            radius: '55%',
-                            center: ['50%', '50%'],
-                            data: [
-                                {value:120, name:'设备'},
-                                {value:50, name:'人工'}
-                            ],
-                            itemStyle: {
-                                emphasis: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                }
-                            }
-                        }
-                    ]
-                },
-                pie_month: {
-                    color: ["#13CE66", "#20a0ff"],
-                    title: {
-                        text: '月 设备/人工占比',
-                        x: 'center'
-                    },
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c} ({d}%)"
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left',
-                        data: ['设备','人工']
-                    },
-                    series: [
-                        {
-                            name: '设备/人工占比',
-                            type: 'pie',
-                            radius: '55%',
-                            center: ['50%', '50%'],
-                            data: [
-                                {value:120, name:'设备'},
-                                {value:50, name:'人工'}
-                            ],
-                            itemStyle: {
-                                emphasis: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                }
-                            }
-                        }
-                    ]
-                },
-                pie_year: {
-                    color: ["#13CE66", "#20a0ff"],
-                    title: {
-                        text: '年度 设备/人工占比',
-                        x: 'center'
-                    },
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c} ({d}%)"
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left',
-                        data: ['设备','人工']
-                    },
-                    series: [
-                        {
-                            name: '设备/人工占比',
-                            type: 'pie',
-                            radius: '55%',
-                            center: ['50%', '50%'],
-                            data: [
-                                {value:120, name:'设备'},
-                                {value:50, name:'人工'}
-                            ],
-                            itemStyle: {
-                                emphasis: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                }
-                            }
-                        }
-                    ]
-                }
+                random:0
             };
         },
         components: {
@@ -486,42 +479,37 @@
                 let _this = this;
                 _this.dateValue = _this.dateValue===''? moment().format('YYYY-MM-DD'): _this.dateValue;
                 _this.technicalValue =  _this.technicalValue===''?'1001': _this.technicalValue;
-                _this.cycle_everyday.xAxis.data=[];
-                 for(let i=0;i<12;i++){
-                     _this.cycle_everyday.series.push( {
-                         name:'',
-                         type:'line',
-                         data:[],
-                     });
-                 }
-//                _this.cycle_everyday.series[0].data=[];
-//                _this.cycle_everyday.series[1].data=[];
+                _this.dateTypeValue  =   _this.dateTypeValue===''?1: _this.dateTypeValue;
                 
-                _this.cycle_month.xAxis.data = [];
-                _this.cycle_month.series[0].data = [];
-                _this.cycle_month.series[1].data = [];
-                _this.cycle_year.xAxis.data = [];
-                _this.cycle_year.series[0].data = [];
-                _this.cycle_year.series[1].data = [];
-                //日饼图 设备总数/人工
-                _this.pie_day.legend.data = [];
-                _this.pie_day.series[0].data = [];
-                _this.pie_month.legend.data = [];
-                _this.pie_month.series[0].data = [];
-                _this.pie_year.legend.data = [];
-                _this.pie_year.series[0].data = [];
+                _this.firstLeftChart.legend.data=[];
+                _this.firstLeftChart.xAxis.data=[];
+                _this.firstLeftChart.series=[];
+                for(let i=0;i<12;i++){
+                    _this.firstLeftChart.series.push( {
+                        name:'',
+                        type:'line',
+                        symbol:'none',  //这句就是去掉点的
+                        smooth:true,  //这句就是让曲线变平滑的
+                        data:[],
+                    });
+                }
+              
             },
-            coreLogistic:function () {
+            firstLeftChartLoad:function () {
                 let params = coreLogisticModel;
 //                debugger;
                 if (this.mock) {
                     params = Object.assign({'statFunc': 'coreLogisticModel', 'type':this.dateValue,'other': this.technicalValue}, params);
                 }
-                let cycle= this.cycle_everyday;
+                let cycle= this.firstLeftChart;
                 aggregate(params).then(data => {
+                    this.firstLeftChart.legend.data=[];
+                    this.firstLeftChart.xAxis.data=[];
+//                    this.firstLeftChart.series=[];
                     for( let i=0;i<data.length ;i++) {
                         cycle.legend.data.push(data[i].label + (i%2===0?"/进":"/出"));
                         cycle.series[i].name = data[i].label + (i%2===0?"/进":"/出");
+                       
                         for (let key in data[i].list) {
                             if (i === 0) cycle.xAxis.data.push(data[i].list[key]._id.date);
                             if(i%2===0){
@@ -529,82 +517,178 @@
                             }else{
                                 cycle.series[i].data.push(data[i].list[key].outNum);
                             }
-                           
                         }
                     }
                 });
-                
-                
-//        debugger;
-             console.log(cycle.series);
             },
-            /*院内物流数 (日/月/年)
-			* type:string day/month/year
-			* */
-            logisticNum:function(type){
-                let params = LogisticData;
+            firstRightChartLoad:function(){
+                let self = this;
+                /* 设备和工人*/
+                self.firstRightChart.xAxis.data=[];
+                self.firstRightChart.series =[];
                 
-                if (this.mock) {
-                    params = Object.assign({'statFunc': 'logisticNum', 'type': type}, params);
-                }
-                let cycle= null; // zhuzh
-                let pie= null;
-                switch(type){
-                    case "day":
-                        cycle= this.cycle_everyday;
-                        pie = this.pie_day;
-                        break;
-                    case "month":
-                        cycle= this.cycle_month;
-                        pie = this.pie_month;
-                        break;
-                    case "year":
-                        cycle= this.cycle_year;
-                        pie = this.pie_year;
-                        break;
-                }
-                
-                let total =0; //设备总数
-                let peopleNum =0; //人数
-                aggregate(params).then(data => {
-                    for (let i = 0; i< data.length; i++) {
-                        let value = data[i].num;
-                        let avg = data[i].avg;
-                        let name = data[i]._id.axisName;
-                        total +=value;
-                        // 取不到的，则直接展示渠道编码
-                        
-                        cycle.legend.data=['数量','平均数'];
-                        cycle.series[0].name = cycle.legend.data[0];
-                        cycle.series[1].name = cycle.legend.data[1];
-                        cycle.xAxis.data.push(name);
-                        cycle.series[0].data.push(value);
-                        cycle.series[1].data.push(avg);
+                for(let i=0;i<self.firstRightChart.legend.data.length;i++){
+                    let arr =[];
+                    for(let j=0; j<24;j++){
+                        if(i===0)  self.firstRightChart.xAxis.data.push(j);
+                        arr.push( i%2===0?GetRandomNum(0,1000):GetRandomNum(-1000,0));
                     }
-                    
-                    cycle.series[0].itemStyle.normal.barBorderRadius=[10,10,0,0];
-                    cycle.series[1].itemStyle.normal.barBorderRadius=[10,10,0,0];
-                    //日占比图数据
-                    pie.legend.data = ['设备','人工'];
-                    pie.series[0].data=[{value:total,name:'设备'},{value:cycle.series[0].data[3],name:'人工'}];
-                });
+                    self.firstRightChart.series.push( {
+                        name:self.firstRightChart.legend.data[i],
+                        type:'line',
+                        symbol:'none',  //这句就是去掉点的
+                        smooth:true,  //这句就是让曲线变平滑的
+                        data:arr
+                    });
+                }
+            },
+            twoLeftChartLoad:function () {
+                let self = this;
+                self.twoLeftChart.legend.data=[];
+                self.twoLeftChart.xAxis.data = [];
+                self.twoLeftChart.series=[];
+    
+                for(let key in OfficeType){
+                    self.twoLeftChart.xAxis.data.push(OfficeType[key].label);
+                }
+      
+                for(let key in products){
+                    self.twoLeftChart.legend.data.push(products[key].label);
+                    let arr = [];
+                    for(let i=0;i< self.twoLeftChart.xAxis.data.length;i++){
+                        arr.push(GetRandomNum(0,self.random));
+                    }
+                    self.twoLeftChart.series.push({
+                        name: products[key].label ,
+                        type: 'bar',
+                        barGap: 0,
+                        data: arr,
+                        itemStyle:{
+                            normal:{
+                                barBorderRadius:[10,10,0,0]
+                            }
+                        }
+                    });
+                }
+              
+            },
+            twoRightChartLoad:function () {
+                let self = this;
+                self.twoRightChart.legend.data=['设备','人工'];
+                self.twoRightChart.xAxis.data = [];
+                self.twoRightChart.series=[];
+                for(let key in OfficeType){
+                    self.twoRightChart.xAxis.data.push(OfficeType[key].label);
+                    self.twoRightChart.series.push({
+                            name: '',
+                            type: 'bar',
+                            barGap: 0,
+                            data: [],
+                            itemStyle:{
+                                normal:{
+                                    barBorderRadius:[10,10,0,0]
+                                }
+                            }
+                        });
+                }
+                for(let k=0;k< self.twoRightChart.series.length;k++){
+                    for(let i=0;i< self.twoRightChart.legend.data.length;i++){
+                        self.twoRightChart.series[i].name=self.twoRightChart.legend.data[i];
+                        self.twoRightChart.series[i].data.push(GetRandomNum(0,self.random));
+                    }
+                }
+            },
+            thirdLeftChartLoad:function () {
+                let self = this;
+                self.thirdLeftChart.legend.data=[];
+                self.thirdLeftChart.xAxis.data = [];
+                self.thirdLeftChart.series=[];
+        
+                for(let key in OfficeType){
+                    self.thirdLeftChart.xAxis.data.push(OfficeType[key].label);
+                }
+        
+                for(let key in products){
+                    self.thirdLeftChart.legend.data.push(products[key].label);
+                    let arr = [];
+                    for(let i=0;i< self.thirdLeftChart.xAxis.data.length;i++){
+                        arr.push(GetRandomNum(0,self.random));
+                    }
+                    self.thirdLeftChart.series.push({
+                        name: products[key].label ,
+                        type: 'bar',
+                        barGap: 0,
+                        data: arr,
+                        itemStyle:{
+                            normal:{
+                                barBorderRadius:[10,10,0,0]
+                            }
+                        }
+                    });
+                }
+        
+            },
+            thirdRightChartLoad:function () {
+                let self = this;
+                self.thirdRightChart.legend.data=['设备','人工'];
+                self.thirdRightChart.xAxis.data = [];
+                self.thirdRightChart.series=[];
+                for(let key in OfficeType){
+                    self.thirdRightChart.xAxis.data.push(OfficeType[key].label);
+                    self.thirdRightChart.series.push({
+                        name: '',
+                        type: 'bar',
+                        barGap: 0,
+                        data: [],
+                        itemStyle:{
+                            normal:{
+                                barBorderRadius:[10,10,0,0]
+                            }
+                        }
+                    });
+                }
+                for(let k=0;k< self.thirdRightChart.series.length;k++){
+                    for(let i=0;i< self.thirdRightChart.legend.data.length;i++){
+                        self.thirdRightChart.series[i].name=self.thirdRightChart.legend.data[i];
+                        self.thirdRightChart.series[i].data.push(GetRandomNum(0,self.random));
+                    }
+                }
             },
             statAll: function () {
                 let _this = this;
                 // 统计前初始化数据先，新增统计需要在此配置好初始化
                 _this.initData();
-                // 日统计
-                _this.coreLogistic();
-                // 月统计
-                _this.logisticNum('month');
-                // 年统计
-                _this.logisticNum('year');
-                //  统计和总数占比
+             
+                _this.firstLeftChartLoad();
+                _this.firstRightChartLoad();
+ 
+               
                 
+            },
+            statSendAll:function(){
+                let _this = this;
+                switch(_this.dateTypeValue){
+                    case 1:
+                        _this.random =500;
+                        break;
+                    case 2:
+                        _this.random =1000;
+                        break;
+                    case 3:
+                        _this.random =2000;
+                        break;
+        
+                }
+                _this.twoLeftChartLoad();
+                _this.twoRightChartLoad();
+    
+                _this.thirdLeftChartLoad();
+                _this.thirdRightChartLoad();
             }
         },
         mounted: function () {
             this.statAll();
+            this.statSendAll();
         }
     };
 </script>
@@ -617,7 +701,7 @@
     }
     .echarts-pie{
         float: left;
-        width: 300px;
+        width: 100%;
         height: 200px;
     }
     .c-charts {

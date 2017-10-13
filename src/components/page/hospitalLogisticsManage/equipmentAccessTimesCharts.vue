@@ -10,11 +10,11 @@
                         align="right"
                         :picker-options="pickerOptions2"
                         placeholder="选择日前"
-                        v-on:change=" "
+                        v-on:change="setAll"
                         >
                     </el-date-picker>
                     <span class="demonstration">科室:</span>
-                    <el-select v-model="technicalValue" v-on:change=" ">
+                    <el-select v-model="technicalValue" v-on:change="setAll">
                         <el-option
                             v-for="item in technicalOffices"
                             :label="item.label"
@@ -134,6 +134,7 @@
                         {
                             name:'次数/进',
                             type:'line',
+                            smooth:true,
                             data:[],
                             markPoint: {
                                 data: [
@@ -155,6 +156,7 @@
                         {
                             name:'次数/出',
                             type:'line',
+                            smooth:true,
                             data:[],
                             markPoint: {
                                 data: [
@@ -197,13 +199,12 @@
         },
         methods:{
             initData:function(){
-                this.dateValue =this.dateValue===''? moment().format('YYYY-MM-DD'):this.dateValue;
+                this.dateValue =this.dateValue===''?moment(new Date().toLocaleDateString(),'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm'):moment(this.dateValue,'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm');
                 this.technicalValue = this.technicalValue===''?'1001':this.technicalValue;
                 this.chart.xAxis.data=[];
                 this.chart.series[0].data=[];
                 this.chart.series[1].data=[];
-                console.log(moment().format('LT'));
-                console.log(moment().format('LTS'));
+               
             },
             technicalOfficesChart:function () {
                 let params = technicalOfficesModel;
@@ -219,21 +220,12 @@
                         let name = data[key]._id.axisName;
                         let date = data[key]._id.date;
                         // 取不到的，则直接展示渠道编码
-                       
+                 
                         cycle.xAxis.data.push(date);
                         cycle.series[0].data.push(intNum);
                         cycle.series[1].data.push(data[key].outNum);
                     }
                 });
-                console.log("001===>>>  ",moment('2017-09-28').format('YYYY-MM-DD HH:mm:ss'));                        //当前时间
-                console.log("002===>>>  ",moment().add(-1,'year').format('YYYY-MM-DD HH:mm:ss'));         //当前时间  前一年
-                console.log("003===>>>  ",moment().add(-1,'month').format('YYYY-MM-DD HH:mm:ss'));        //当前时间  前一月
-                console.log("004===>>>  ",moment().add(-1,'week').format('YYYY-MM-DD HH:mm:ss'));         //当前时间  前一周
-                console.log("005===>>>  ",moment().add(-1,'days').format('YYYY-MM-DD HH:mm:ss'));         //当前时间  前一天
-                console.log("006===>>>  ",moment().add(-1,'hour').format('YYYY-MM-DD HH:mm:ss'));         //当前时间  前一小时
-                console.log("007===>>>  ",moment().add(-1,'minute').format('YYYY-MM-DD HH:mm:ss'));       //当前时间  前一分钟
-                console.log("008===>>>  ",moment().add(-1,'second').format('YYYY-MM-DD HH:mm:ss'));       //当前时间  前一秒
-                console.log("009===>>>  ",moment().utc().format("YYYY-MM-DD HH:mm:ss"));
                 
             },
             setAll:function () {

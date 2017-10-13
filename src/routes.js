@@ -39,6 +39,7 @@ let routes = [
         hidden: true
     },
     //{ path: '/main', component: Main },
+    /*
     {
         path: '/',
         component: Home,
@@ -100,18 +101,37 @@ let routes = [
             }
         ]
     },
+    */
     {
         path: '/',
         component: Home,
-        name: '医院物流管理',
-        iconCls: 'el-icon-date',
+        name: '物流数统计',
+        iconCls: 'el-icon-star-on',
+        leaf: true,//只有一个节点
         children:[
             {path: '/logisticsStatistics', component: logisticsStatistics, name: '物流数统计'},
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '药品与耗材',
+        iconCls: 'el-icon-menu',
+        children:[
             {path:'/drugConsumablesCharts',component: drugConsumablesCharts,name:'药品与耗材平均值图表'},
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '设备进出统计',
+        iconCls: 'el-icon-date',
+        children:[
             {path:'/equipmentAccessTimesCharts',component: equipmentAccessTimesCharts,name:'设备进出统计表'},
             {path:'/coreLogisticsStatistics',component: coreLogisticsStatistics,name:'全院核心物流统计'}
         ]
     },
+
     {
         path: '*',
         hidden: true,
