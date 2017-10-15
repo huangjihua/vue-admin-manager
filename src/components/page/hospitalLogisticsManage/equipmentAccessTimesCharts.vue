@@ -68,12 +68,12 @@
                                 picker.$emit('pick', date);
                             }
                         }, {
-                        text: '30天前',
-                        onClick(picker) {
-                            const date = moment().subtract(30, 'days').format('YYYY-MM-DD 0:0:0');
-                            picker.$emit('pick', date);
-                        }
-                    }]
+                            text: '30天前',
+                            onClick(picker) {
+                                const date = moment().subtract(30, 'days').format('YYYY-MM-DD 0:0:0');
+                                picker.$emit('pick', date);
+                            }
+                        }]
                 },
                 technicalOffices: [
                     {
@@ -92,7 +92,7 @@
                     }, {
                         value: '1005',
                         label: '胸内科'
-                }],
+                    }],
                 dateValue: '',
                 technicalValue: '1002',
                 chart:{
@@ -204,7 +204,7 @@
                 this.chart.xAxis.data=[];
                 this.chart.series[0].data=[];
                 this.chart.series[1].data=[];
-               
+            
             },
             technicalOfficesChart:function () {
                 let params = technicalOfficesModel;
@@ -220,13 +220,13 @@
                         let name = data[key]._id.axisName;
                         let date = data[key]._id.date;
                         // 取不到的，则直接展示渠道编码
-                 
+                    
                         cycle.xAxis.data.push(date);
                         cycle.series[0].data.push(intNum);
                         cycle.series[1].data.push(data[key].outNum);
                     }
                 });
-                
+            
             },
             setAll:function () {
                 this.initData();

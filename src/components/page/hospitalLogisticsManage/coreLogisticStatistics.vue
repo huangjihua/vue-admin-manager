@@ -453,7 +453,8 @@
                     ],
                     series: []
                 },
-                random:0
+                random:0, /*最大数量*/
+                randomTotal:0 /*total最大数量*/
             };
         },
         components: {
@@ -594,7 +595,7 @@
                 for(let k=0;k< self.twoRightChart.series.length;k++){
                     for(let i=0;i< self.twoRightChart.legend.data.length;i++){
                         self.twoRightChart.series[i].name=self.twoRightChart.legend.data[i];
-                        self.twoRightChart.series[i].data.push(GetRandomNum(0,self.random));
+                        self.twoRightChart.series[i].data.push(GetRandomNum(0,self.randomTotal));
                     }
                 }
             },
@@ -650,7 +651,7 @@
                 for(let k=0;k< self.thirdRightChart.series.length;k++){
                     for(let i=0;i< self.thirdRightChart.legend.data.length;i++){
                         self.thirdRightChart.series[i].name=self.thirdRightChart.legend.data[i];
-                        self.thirdRightChart.series[i].data.push(GetRandomNum(0,self.random));
+                        self.thirdRightChart.series[i].data.push(GetRandomNum(0,self.randomTotal));
                     }
                 }
             },
@@ -658,24 +659,23 @@
                 let _this = this;
                 // 统计前初始化数据先，新增统计需要在此配置好初始化
                 _this.initData();
-             
                 _this.firstLeftChartLoad();
                 _this.firstRightChartLoad();
- 
-               
-                
             },
             statSendAll:function(){
                 let _this = this;
                 switch(_this.dateTypeValue){
                     case 1:
                         _this.random =500;
+                        _this.randomTotal= 1000;
                         break;
                     case 2:
                         _this.random =1000;
+                        _this.randomTotal= 2000;
                         break;
                     case 3:
                         _this.random =2000;
+                        _this.randomTotal= 4000;
                         break;
         
                 }

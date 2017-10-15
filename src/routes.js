@@ -19,6 +19,9 @@ import  logisticsStatistics from './components/page/hospitalLogisticsManage/Logi
 import  drugConsumablesCharts from './components/page/hospitalLogisticsManage/DrugAndConsumablesCharts.vue'
 import equipmentAccessTimesCharts from './components/page/hospitalLogisticsManage/equipmentAccessTimesCharts.vue'
 import coreLogisticsStatistics from './components/page/hospitalLogisticsManage/coreLogisticStatistics.vue'
+import  PageFive from './components/page/hospitalLogisticsManage/PageFive.vue'
+import PageSix from './components/page/hospitalLogisticsManage/PageSix.vue'
+
 let routes = [
     {
         path: '/login',
@@ -131,7 +134,16 @@ let routes = [
             {path:'/coreLogisticsStatistics',component: coreLogisticsStatistics,name:'全院核心物流统计'}
         ]
     },
-
+    {
+        path: '/',
+        component: Home,
+        name: '数量统计和效率统计',
+        iconCls: 'el-icon-date',
+        children:[
+            {path:'/PageFive',component: PageFive,name:'设备数量统计表'},
+            {path:'/PageSix',component: PageSix,name:'工作效率'}
+        ]
+    },
     {
         path: '*',
         hidden: true,
