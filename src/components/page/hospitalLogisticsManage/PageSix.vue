@@ -19,14 +19,13 @@
                         placeholder="选择日期范围"  v-on:change="statAll">
                     </el-date-picker>
                 </div>
-                </div>
             </el-row>
             <p/>
             <el-row :gutter="20">
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
                     <el-card class="box-card">
                         <div class="echarts">
-                            <IEcharts :option="chart"></IEcharts>
+                            <IEcharts :option="chart" v-on:click="onChartClick"></IEcharts>
                         </div>
                     </el-card>
                 </el-col>
@@ -39,11 +38,11 @@
                 <!--</el-col>-->
             </el-row>
             <p/>
-            <el-row :gutter="20">
+            <el-row :gutter="20" >
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
                     <el-card class="box-card">
-                        <div class="echarts">
-                            <IEcharts :option="chart3"></IEcharts>
+                        <div class="echarts" >
+                            <IEcharts :option="chart3" v-bind:class="[isShow?'':'fn-hide']"></IEcharts>
                         </div>
                     </el-card>
                 </el-col>
@@ -64,13 +63,14 @@
 <script>
     import IEcharts from 'vue-echarts-v3/src/full.vue';
     import {aggregate} from 'api/aggregate';
-    import {OfficeType,equipmentType,products,GetRandomNum} from 'utils/logistic';
+    import {OfficeType,equipmentType,products,operator,GetRandomNum} from 'utils/logistic';
     // 时间处理
     import moment from 'moment';
     export default{
         data() {
             return {
                 mock: true,
+                isShow:true,
                 radio3: 'days',
                 radio4: 'days',
                 technicalOffices: [
@@ -137,7 +137,7 @@
                     },
                     series: []
                 },
-                chart2:{
+                 chart2:{
                     title: {
                         text: '平均值'
                     },
@@ -207,7 +207,7 @@
                     barMaxWidth:30,
                     xAxis: {
                         type: 'category',
-                        name: '科室',
+                        name: '科员',
                         boundaryGap: true,/* 不从0刻度开始*/
                         data: [],
                         axisTick: {
@@ -276,7 +276,7 @@
                 this.technicalValue = this.technicalValue===''?'1001':this.technicalValue;
                 
             },
-            chart1_2:function () {
+            chart1:function () {
                 let self =this;
                 self.chart.xAxis.data=[];
                 self.chart.series =[];
@@ -289,7 +289,10 @@
                     }
                     console.log(xAixs);
                 }else{
-                    xAixs = [moment().format('YYYY-MM-DD')];
+                    //default
+                    for(let i=6;i>=0;i--){
+                        xAixs.push(moment().add(-i,'days').format('YYYY-MM-DD'));
+                    }
                 }
                 self.chart.xAxis.data = xAixs;
                 let _data=[];
@@ -329,115 +332,93 @@
                     }
                 });
                 
-                //right
-                self.chart2.xAxis.data = xAixs;
-
+//                self.chart.on('click',function(params){
+//                    console.log(params);
+//                });
                 
+                //right
+//                self.chart2.xAxis.data = xAixs;
+
+            
             },
-            chart3_4:function () {
+            operatorChart:function (num) {
                 let self =this;
                 self.chart3.xAxis.data=[];
-                self.chart4.xAxis.data=[];
                 self.chart3.series =[];
+                let personNum = GetRandomNum(1,operator.length); /*人数*/
+                //没人随机分摊物流数
+                let count=[];
+                let temp =num;
+                for(let i=0;i<personNum;i++){
+                    temp = GetRandomNum(1,temp/2); /* 默认第一个取一半，防止最后一个是<0的数*/
+                    self.chart3.xAxis.data.push(operator[i].name);
+                    if(i=== (personNum-1)){
+                        //保证count数组的和===num
+                        let total=count.reduce((result,item,index,count) =>{return result+item;});
+                        console.log(num+'--'+ total);
+                        if(num>=total){
+                            count.push(num-total);
+                        }else{
+                            count.push(0);
+                        }
+                    }else{
+                        count.push(temp);
+                    }
+                    
+                    
+                }
+                console.log(count);
+                self.chart3.series.push({
+                    name: '人工',
+                    type:'bar',
+                    smooth:true,
+                    data:count,
+                    stack: '数量',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'inside',
+                            align:'center'
+                        }
+                    },
+                    itemStyle: {
+                        barMaxWidth: '20',
+                        normal: {
+                            barBorderRadius: [10, 10, 0, 0]
+                        }
+                    }
+                });
+                
+                
+            },
+            chart_4:function () {
+                let self =this;
+                self.chart4.xAxis.data=[];
                 self.chart4.series =[];
                 self.chart4.legend.data=['设备','人工'];
-                let _data;
-                for(let key in equipmentType){
-                    self.chart3.legend.data.push(equipmentType[key].label);
-                    _data=[];
-                    console.log(self.technicalValue2);
-                    for(let index in OfficeType){
-                        for(let i=0;i<self.technicalValue2.length;i++){
-                            if(OfficeType[index].value===self.technicalValue2[i]){
-                                let  num = GetRandomNum(0,self.radio4==='days'?200:self.radio3==='week'?500:1000);
-                                if(key==='0'){
-                                    self.chart3.xAxis.data.push(OfficeType[index].label);
-                                    self.chart4.xAxis.data.push(OfficeType[index].label);
-                                }
-                                _data.push(num);
-                                
-                            }
-                        }
-                        
-                    }
-                    self.chart3.series.push({
-                        name:equipmentType[key].label,
-                        type:'bar',
-                        smooth:true,
-                        data:_data,
-                        stack: '数量',
-                        label: {
-                            normal: {
-                                show: true,
-                                position: 'inside',
-                                align:'center'
-                            }
-                        },
-                        itemStyle:{
-                            barMaxWidth: '20',
-                            normal:{
-                                barBorderRadius:[key==="3"?10:0, key==="3"?10:0, 0, 0]
-                            },
-//                            barCategoryGap:'2%'
-                        }
-                    },)
-                }
-                
-                //chart2
-                let array=[[]];
-                for(let a  in self.chart3.series){
-                    for(let b in self.chart3.series[a].data){
-                        if(a==='0') array[b]=[];
-                        array[b].push(self.chart3.series[a].data[b]);
-                    }
-                }
-                console.log(array);
-                let temp=0, first =[],second=[],temp2=0;
-                //设备／人工横向总数
-                for(let a in array){
-                    for(let b in array[a]){
-                        if(b<3){
-                            temp+=array[a][b];
-                        }else{
-                            temp2= array[a][b];
-                        }
-                    }
-                    first.push(temp);
-                    second.push(temp2);
-                }
-                for(let key in self.chart4.legend.data){
-                    self.chart4.series.push({
-                        name:self.chart4.legend.data[key],
-                        type:'bar',
-                        smooth:true,
-                        data:key==='0'?first:second,
-                        stack: '数量',
-                        label: {
-                            normal: {
-                                show: true,
-                                position: 'inside',
-                                align:'center'
-                            }
-                        },
-                        itemStyle:{
-                            barMaxWidth: '20',
-                            normal:{
-                                barBorderRadius:[key==="3"?10:0, key==="3"?10:0, 0, 0]
-                            },
-//                            barCategoryGap:'2%'
-                        }
-                    })
-                }
+              
             },
             statAll:function () {
                 this.initData();
-                this.chart1_2();
+                this.chart1();
+            },
+            onChartClick:function(event, instance, echarts) {
+//                console.log(arguments);
+                if(arguments[0].componentSubType==='bar'){
+                    this.isShow = true;
+                    console.log(arguments[0].value);
+                    this.operatorChart(arguments[0].value);
+                   
+                    
+                }
+               
             }
         },
+        
         mounted:function () {
             this.statAll();
-            
-            this.chart3_4();
+            this.chart_4();
+         
         }
     }
 </script>
@@ -446,5 +427,8 @@
         float: left;
         width: 100%;
         height: 400px;
+    }
+    .fn-hide{
+        display: none;
     }
 </style>

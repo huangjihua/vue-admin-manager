@@ -35,7 +35,15 @@ export const OfficeType =[
         label: '心内科'
     }]; //科室
 export const equipmentType=[{ label:"PTS",value:1},{label:"ETV",value:2},{label:"AVG",value:3},{label:"人工",value:4}];//设备类型
-const operator=[{name:'hank',sex:1},{name:'lila',sex:0},{name:'lemon',sex:1}]; /*操作人员*/
+export const operator=[
+    {id:1000,name:'hank',sex:1},
+    {id:1001,name:'lila',sex:0},
+    {id:1002,name:'lemon',sex:1},
+    {id:1003,name:'nana',sex:0},
+    {id:1004,name:'nimo',sex:0},
+    {id:1005,name:'张菲',sex:1},
+    {id:1006,name:'王娜',sex:0},
+    {id:1007,name:'吴萍',sex:0}]; /*操作人员*/
 const product = [
     {label:'PIVAS',id:'p1',list:[]},  {label:'PIVAS',id:'p1',list:[]},
     {label:'药房',id:'p2',list:[]}, {label:'药房',id:'p2',list:[]},
@@ -52,6 +60,7 @@ export const products =  [
     {label:'衣服',id:'p5'},
     {label:'厨房',id:'p6'}
 ];
+
 /**
  * 随机生成药
  * @param forNum  循环次数 {number
