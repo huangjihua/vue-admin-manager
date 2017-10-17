@@ -42,21 +42,43 @@
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
                     <el-card class="box-card">
                         <div class="echarts" >
-                            <IEcharts :option="chart3" v-bind:class="[isShow?'':'fn-hide']"></IEcharts>
+                             <IEcharts :option="chart3" @click="onChart3Click" v-bind:class="[isShow?'':'fn-hide']"></IEcharts>
                         </div>
                     </el-card>
                 </el-col>
             </el-row>
             <p/>
-            <el-row :gutter="20">
-                <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                    <el-card class="box-card">
-                        <div class="echarts">
-                            <IEcharts :option="chart4"></IEcharts>
-                        </div>
-                    </el-card>
-                </el-col>
-            </el-row>
+            <el-dialog title="科员操作明细" :visible.sync="dialogTableVisible">
+                <el-table
+                    :data="tableData3"
+                    height="250"
+                    border
+                    style="width: 100%">
+                    <el-table-column
+                        prop="id"
+                        label="员工"
+                        width="90">
+                    </el-table-column>
+                    <el-table-column
+                        prop="name"
+                        label="姓名"
+                        width="80">
+                    </el-table-column>
+                    <el-table-column
+                        prop="officeName1"
+                        label="科室A">
+                    </el-table-column>
+                    <el-table-column
+                        prop="officeName2"
+                        label="科室B">
+                    </el-table-column>
+                    <el-table-column
+                        prop="date"
+                        label="日期"
+                        width="180">
+                    </el-table-column>
+                </el-table>
+            </el-dialog>
         </section>
     </section>
 </template>
@@ -66,6 +88,7 @@
     import {OfficeType,equipmentType,products,operator,GetRandomNum} from 'utils/logistic';
     // 时间处理
     import moment from 'moment';
+    import ElDialog from "../../../../node_modules/element-ui/packages/dialog/src/component.vue";
     export default{
         data() {
             return {
@@ -182,7 +205,7 @@
                 },
                 chart3:{
                     title: {
-                        text: '科室物流数对比'
+                        text:'科员操作次数图'
                     },
                     tooltip: {
                         trigger: 'axis'
@@ -219,56 +242,25 @@
                     },
                     yAxis: {
                         type: 'value',
-                        name:'数量'
+                        name:'次数'
                     },
                     series: []
                 },
-                chart4:{
-                    title: {
-                        text: '设备／人工图'
-                    },
-                    tooltip: {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                        type: 'plain',
-                        top:30,
-                        right:10,
-                        data:[]
-                    },
-                    toolbox: {
-                        trigger: 'axis',
-                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                        }
-                    },
-                    calculable: true,
-                    grid: {
-                        left:10,
-                        containLabel: true
-                    },
-                    barMaxWidth:30,
-                    xAxis: {
-                        type: 'category',
-                        name: '科室',
-                        boundaryGap: true,/* 不从0刻度开始*/
-                        data: [],
-                        axisTick: {
-                            show: true,
-                            alignWithLabel: false,
-                            interval: 'auto',
-                            inside: false
-                        }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        name:'数量'
-                    },
-                    series: []
-                }
-            };
+                dialogTableVisible: false,
+                dialogTableVisible2:false,
+                tableData3:[
+                    {
+                        id:1000,
+                        name: '王小虎',
+                        officeName1: '科室',
+                        officeName2: '科室',
+                        date: '2016-05-03'
+                    }]
+            }
+        
         },
         components : {
+            ElDialog,
             IEcharts
         },
         methods:{
@@ -338,8 +330,8 @@
                 
                 //right
 //                self.chart2.xAxis.data = xAixs;
-
-            
+    
+                this.operatorChart(_data[0]);
             },
             operatorChart:function (num) {
                 let self =this;
@@ -364,10 +356,8 @@
                     }else{
                         count.push(temp);
                     }
-                    
-                    
                 }
-                console.log(count);
+                
                 self.chart3.series.push({
                     name: '人工',
                     type:'bar',
@@ -388,16 +378,8 @@
                         }
                     }
                 });
-                
-                
             },
-            chart_4:function () {
-                let self =this;
-                self.chart4.xAxis.data=[];
-                self.chart4.series =[];
-                self.chart4.legend.data=['设备','人工'];
-              
-            },
+           
             statAll:function () {
                 this.initData();
                 this.chart1();
@@ -408,16 +390,39 @@
                     this.isShow = true;
                     console.log(arguments[0].value);
                     this.operatorChart(arguments[0].value);
-                   
-                    
                 }
                
+            },
+            onChart3Click:function (event, instance, echarts) {
+                if(arguments[0].componentSubType==='bar'){
+                    
+                    this.tableData3=[];
+                    let count =arguments[0].value;
+                   
+                    let ky =operator.find((n)=>{
+                         if(n.name===arguments[0].name){
+                             return n;
+                         }
+                    });
+                    let time =moment(-GetRandomNum(0,5),'days').format('YYYY-MM-DD H:SS');
+                    for(let i=0;i<count;i++){
+                        this.tableData3.push( {
+                            id:ky.id,
+                            name:arguments[0].name,
+                            officeName1: OfficeType[GetRandomNum(0,2)].label,
+                            officeName2: OfficeType[GetRandomNum(3,5)].label,
+                            date: time
+                        });
+                    }
+                    this.dialogTableVisible =true;
+                }
             }
+    
         },
         
         mounted:function () {
             this.statAll();
-            this.chart_4();
+          
          
         }
     }
