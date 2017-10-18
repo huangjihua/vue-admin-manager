@@ -168,6 +168,7 @@ export default  {
                 if('technicalOfficesModel'=== statFunc){
                     // debugger;
                     Res = equipentAccessData(type,other,1,500);
+                    console.log('tet');
                 }
                 if('coreLogisticModel'=== statFunc){
                     // debugger;

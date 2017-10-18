@@ -10,11 +10,11 @@
                         align="right"
                         :picker-options="pickerOptions2"
                         placeholder="选择日前"
-                        v-on:change="setAll"
+                        v-on:change=""
                         >
                     </el-date-picker>
                     <span class="demonstration">科室:</span>
-                    <el-select v-model="technicalValue" v-on:change="setAll">
+                    <el-select v-model="technicalValue" v-on:change="">
                         <el-option
                             v-for="item in technicalOffices"
                             :label="item.label"
@@ -29,11 +29,75 @@
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
                     <el-card class="box-card">
                         <div class="echarts">
-                            <IEcharts :option="chart"></IEcharts>
+                            <IEcharts :option="chart" @click="onClickChart1"></IEcharts>
                         </div>
                     </el-card>
                 </el-col>
             </el-row>
+            
+             <el-dialog title="进／出列表明细" :visible.sync="dialogTableVisible">
+                 <span class="demonstration">进明细:</span>
+                 <el-table
+                     :data="tableData3"
+                     height="200"
+                     border
+                     style="width: 100%">
+                     <el-table-column
+                         prop="id"
+                         label="编号"
+                         width="90">
+                     </el-table-column>
+                     <el-table-column
+                         prop="name"
+                         label="操作员"
+                         width="80">
+                     </el-table-column>
+                     <el-table-column
+                         prop="equipmentName"
+                         label="传输载体">
+                     </el-table-column>
+                     <el-table-column
+                         prop="content"
+                         label="内容物">
+                     </el-table-column>
+                     <el-table-column
+                         prop="date"
+                         label="时间"
+                         width="180">
+                     </el-table-column>
+                 </el-table>
+                 <p/>
+                 <span class="demonstration">出明细:</span>
+                 <el-table
+                     :data="tableData4"
+                     height="200"
+                     border
+                     style="width: 100%">
+                     <el-table-column
+                         prop="id"
+                         label="编号"
+                         width="90">
+                     </el-table-column>
+                     <el-table-column
+                         prop="name"
+                         label="操作员"
+                         width="80">
+                     </el-table-column>
+                     <el-table-column
+                         prop="equipmentName"
+                         label="传输载体">
+                     </el-table-column>
+                     <el-table-column
+                         prop="content"
+                         label="内容物">
+                     </el-table-column>
+                     <el-table-column
+                         prop="date"
+                         label="时间"
+                         width="180">
+                     </el-table-column>
+                 </el-table>
+             </el-dialog>
         </section>
     </section>
 </template>
@@ -41,9 +105,11 @@
     import IEcharts from 'vue-echarts-v3/src/full.vue';
     import {aggregate} from 'api/aggregate';
     import technicalOfficesModel from 'static/requestList/swissdata/drugAndconsumablesModel.json';
-//    import technicalOfficesModel from 'static/requestList/swissdata/logisticsStatistics.json';
+
+    import {OfficeType,equipmentType,products,operator,GetRandomNum} from 'utils/logistic';
     // 时间处理
     import moment from 'moment';
+    import ElDialog from "../../../../node_modules/element-ui/packages/dialog/src/component.vue";
     export default{
         data() {
             return {
@@ -191,10 +257,14 @@
                             }
                         }
                     ]
+                },
+                dialogTableVisible:false,
+                tableData3:[],
+                tableData4:[]
                 }
-            };
         },
         components : {
+            ElDialog,
             IEcharts
         },
         methods:{
@@ -228,13 +298,53 @@
                 });
             
             },
+            onClickChart1:function (event, instance, echarts) {
+//                console.log(arguments);
+                if(arguments[0].componentSubType==='line'){
+        
+                    this.tableData3=[];
+                    let count =arguments[0].value;
+
+                    let time ='';
+                    //进
+                    for(let i=0;i<count;i++){
+                        time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
+                        this.tableData3.push( {
+                            id:i+1,
+                            name:operator[GetRandomNum(0,operator.length-1)].name,
+                            equipmentName: equipmentType[GetRandomNum(0,2)].label,
+                            content:'进／'+['A','B','C','D','E'][GetRandomNum(0,4)],
+                            date: time
+                        });
+                    }
+                    //出
+                    let currentTimeIndex =this.chart.xAxis.data.indexOf(arguments[0].name,0);
+                    let outCount =Math.abs(this.chart.series[1].data[currentTimeIndex]);
+                    console.log(this.chart.xAxis.data);
+                    console.log(currentTimeIndex);
+                    console.log(count+'---'+outCount);
+                    console.log(this.chart.series[1].data);
+                    for(let i=0;i<outCount;i++){
+                        time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
+                        this.tableData4.push( {
+                            id:i+1,
+                            name:operator[GetRandomNum(0,operator.length-1)].name,
+                            equipmentName: equipmentType[GetRandomNum(0,2)].label,
+                            content:'出／'+['A','B','C','D','E'][GetRandomNum(0,4)],
+                            date: time
+                        });
+                    }
+//                    this.dialogTableVisible =true;
+                }
+            },
             setAll:function () {
                 this.initData();
-                this.technicalOfficesChart();
+                
             }
         },
         mounted:function () {
             this.setAll();
+            this.technicalOfficesChart();
         }
     }
 </script>

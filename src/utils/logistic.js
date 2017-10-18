@@ -133,12 +133,8 @@ export function equipentAccessData(date,technicalValue,min,max) {
             outNum: GetRandomNum(-max, -min)
         });
         advanceTime = moment(advanceTime).subtract(-1, 'hour').format('YYYY-MM-DD HH:mm');
-        console.log('a:'+advanceTime);
+        // console.log('a:'+advanceTime);
     }
-
-    // Array.from(eData,function (x) {
-    //     console.log(x);
-    // })
     return eData;
 }
 

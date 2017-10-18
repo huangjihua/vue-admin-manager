@@ -42,7 +42,7 @@
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
                     <el-card class="box-card">
                         <div class="echarts" >
-                             <IEcharts :option="chart3" @click="onChart3Click" v-bind:class="[isShow?'':'fn-hide']"></IEcharts>
+                             <IEcharts :option="chart3" :loading="loading" @click="onChart3Click" v-bind:class="[isShow?'':'fn-hide']"></IEcharts>
                         </div>
                     </el-card>
                 </el-col>
@@ -93,6 +93,7 @@
         data() {
             return {
                 mock: true,
+                loading:true,
                 isShow:true,
                 radio3: 'days',
                 radio4: 'days',
@@ -247,15 +248,7 @@
                     series: []
                 },
                 dialogTableVisible: false,
-                dialogTableVisible2:false,
-                tableData3:[
-                    {
-                        id:1000,
-                        name: '王小虎',
-                        officeName1: '科室',
-                        officeName2: '科室',
-                        date: '2016-05-03'
-                    }]
+                tableData3:[]
             }
         
         },
@@ -404,7 +397,7 @@
                              return n;
                          }
                     });
-                    let time =moment(-GetRandomNum(0,5),'days').format('YYYY-MM-DD H:SS');
+                    let time =moment(-GetRandomNum(0,5),'days').format('YYYY-MM-DD H:mm');
                     for(let i=0;i<count;i++){
                         this.tableData3.push( {
                             id:ky.id,
