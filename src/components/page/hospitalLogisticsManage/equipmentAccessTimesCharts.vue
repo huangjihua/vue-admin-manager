@@ -334,7 +334,11 @@
                             date: time
                         });
                     }
+<<<<<<< HEAD
+                    this.dialogTableVisible =true;
+=======
 //                    this.dialogTableVisible =true;
+>>>>>>> develop
                 }
             },
             setAll:function () {
