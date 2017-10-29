@@ -139,10 +139,10 @@ export default  {
                             Res = TodayLogisticList;
                             break;
                         case 'month':
-                            Res = MonthLogisticList;
+                            Res = TodayLogisticList;//MonthLogisticList;
                             break;
                         case 'year':
-                            Res =  YearLogisticList;
+                            Res =  TodayLogisticList;//YearLogisticList;
                             break;
                     }
                 }
@@ -156,11 +156,11 @@ export default  {
                             Res = formatDrug(other,15,80,1000);
                             break;
                         case 'week_top_ten':
-                            Res = formatDrug(other,10,30,300,'asc');
+                            Res = formatDrug(other,10,1,100,'asc');
                             break;
                         case 'month_top_ten':
                             debugger;
-                            Res =  formatDrug(other,10,100,1000,'asc');
+                            Res =  formatDrug(other,10,100,300,'asc');
                             break;
                     }
                 }

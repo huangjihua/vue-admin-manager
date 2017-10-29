@@ -109,7 +109,7 @@
                                     barBorderRadius:[]
                                 }
                             }
-                            
+
                         },
                         {
                             name: "日平均数",
@@ -403,6 +403,7 @@
               }
               let cycle= null; // zhuzh
               let pie= null;
+              let num =1;
               switch(type){
                   case "day":
                       cycle= this.cycle_everyday;
@@ -411,10 +412,12 @@
                   case "month":
                       cycle= this.cycle_month;
                       pie = this.pie_month;
+                      num =30;
                       break;
                   case "year":
                       cycle= this.cycle_year;
                       pie = this.pie_year;
+                      num = 12*30;
                       break;
               }
 
@@ -422,8 +425,8 @@
               let peopleNum =0; //人数
                aggregate(params).then(data => {
                    for (let i = 0; i< data.length; i++) {
-                      let value = data[i].num;
-                      let avg = data[i].avg;
+                      let value = data[i].num*num;
+                      let avg = data[i].avg*num;
                       let name = data[i]._id.axisName;
                       total +=value;
                       // 取不到的，则直接展示渠道编码
@@ -435,7 +438,7 @@
                        cycle.series[0].data.push(value);
                        cycle.series[1].data.push(avg);
                   }
-                   
+
                    cycle.series[0].itemStyle.normal.barBorderRadius=[10,10,0,0];
                    cycle.series[1].itemStyle.normal.barBorderRadius=[10,10,0,0];
                     //日占比图数据

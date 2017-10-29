@@ -161,7 +161,7 @@
                     },
                     series: []
                 },
-                 chart2:{
+                chart2:{
                     title: {
                         text: '平均值'
                     },
@@ -250,7 +250,7 @@
                 dialogTableVisible: false,
                 tableData3:[]
             }
-        
+
         },
         components : {
             ElDialog,
@@ -259,7 +259,7 @@
         methods:{
             initData:function(){
                 this.technicalValue = this.technicalValue===''?'1001':this.technicalValue;
-                
+
             },
             chart1:function () {
                 let self =this;
@@ -316,15 +316,16 @@
 //                            barCategoryGap:'2%'
                     }
                 });
-                
+
 //                self.chart.on('click',function(params){
 //                    console.log(params);
 //                });
-                
+
                 //right
 //                self.chart2.xAxis.data = xAixs;
-    
+
                 this.operatorChart(_data[0]);
+
             },
             operatorChart:function (num) {
                 let self =this;
@@ -350,7 +351,7 @@
                         count.push(temp);
                     }
                 }
-                
+
                 self.chart3.series.push({
                     name: '人工',
                     type:'bar',
@@ -371,27 +372,31 @@
                         }
                     }
                 });
+                window.setTimeout(function(){
+                    self.loading=false;
+                },1000);
             },
-           
+
             statAll:function () {
                 this.initData();
                 this.chart1();
             },
             onChartClick:function(event, instance, echarts) {
 //                console.log(arguments);
+                this.loading=true;
                 if(arguments[0].componentSubType==='bar'){
                     this.isShow = true;
                     console.log(arguments[0].value);
                     this.operatorChart(arguments[0].value);
                 }
-               
+
             },
             onChart3Click:function (event, instance, echarts) {
                 if(arguments[0].componentSubType==='bar'){
-                    
+
                     this.tableData3=[];
                     let count =arguments[0].value;
-                   
+
                     let ky =operator.find((n)=>{
                          if(n.name===arguments[0].name){
                              return n;
@@ -410,13 +415,13 @@
                     this.dialogTableVisible =true;
                 }
             }
-    
+
         },
-        
+
         mounted:function () {
             this.statAll();
-          
-         
+
+
         }
     }
 </script>

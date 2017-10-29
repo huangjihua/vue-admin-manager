@@ -16,7 +16,7 @@ import MsgNumCycleCharts from './components/page/msg/stat/MsgNumCycleCharts.vue'
 import GeoUserNumCityRanked from './components/page/userDataStat/GeoUserNumCityRanked.vue';
 
 import  logisticsStatistics from './components/page/hospitalLogisticsManage/LogisticsStatistics .vue'
-import  drugConsumablesCharts from './components/page/hospitalLogisticsManage/DrugAndConsumablesCharts.vue'
+import  drugConsumablesCharts from './components/page/hospitalLogisticsManage/DrugAndConsumablesCharts2.vue'
 import equipmentAccessTimesCharts from './components/page/hospitalLogisticsManage/equipmentAccessTimesCharts.vue'
 import coreLogisticsStatistics from './components/page/hospitalLogisticsManage/coreLogisticStatistics.vue'
 import  PageFive from './components/page/hospitalLogisticsManage/PageFive.vue'

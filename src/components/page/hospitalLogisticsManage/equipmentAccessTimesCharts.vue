@@ -34,7 +34,7 @@
                     </el-card>
                 </el-col>
             </el-row>
-            
+
              <el-dialog title="进／出列表明细" :visible.sync="dialogTableVisible">
                  <span class="demonstration">进明细:</span>
                  <el-table
@@ -274,7 +274,7 @@
                 this.chart.xAxis.data=[];
                 this.chart.series[0].data=[];
                 this.chart.series[1].data=[];
-            
+
             },
             technicalOfficesChart:function () {
                 let params = technicalOfficesModel;
@@ -290,21 +290,21 @@
                         let name = data[key]._id.axisName;
                         let date = data[key]._id.date;
                         // 取不到的，则直接展示渠道编码
-                    
+
                         cycle.xAxis.data.push(date);
                         cycle.series[0].data.push(intNum);
                         cycle.series[1].data.push(data[key].outNum);
                     }
                 });
-            
+
             },
             onClickChart1:function (event, instance, echarts) {
-//                console.log(arguments);
+
                 if(arguments[0].componentSubType==='line'){
-        
+
                     this.tableData3=[];
                     let count =arguments[0].value;
-
+                    console.log(count);
                     let time ='';
                     //进
                     for(let i=0;i<count;i++){
@@ -334,16 +334,12 @@
                             date: time
                         });
                     }
-<<<<<<< HEAD
                     this.dialogTableVisible =true;
-=======
-//                    this.dialogTableVisible =true;
->>>>>>> develop
                 }
             },
             setAll:function () {
                 this.initData();
-                
+
             }
         },
         mounted:function () {

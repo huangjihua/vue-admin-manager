@@ -46,17 +46,12 @@
             </el-row>
         </section>
     </section>
-
-
-
-
-
-
 </template>
 
 <script>
     import IEcharts from 'vue-echarts-v3/src/full.vue';
     import {aggregate} from 'api/aggregate';
+    import {GetRandomNum} from 'utils/logistic';
     import LogisticData from 'static/requestList/swissdata/logisticsStatistics.json';
     // 时间处理
     import moment from 'moment';
@@ -125,8 +120,15 @@
                                 normal:{
                                     barBorderRadius:[10, 10, 0, 0]
                                 }
+                            },
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'outside',
+                                    formatter: '{c}万元'
+                                }
                             }
-                        },
+                        }
                     ]
                 },
                 drug_month: {
@@ -189,6 +191,13 @@
                                 normal:{
                                     barBorderRadius:[10, 10, 10, 10]
                                 }
+                            },
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'outside',
+                                    formatter: '{c}万元'
+                                }
                             }
                         }
                     ]
@@ -196,7 +205,7 @@
                 drug_week_top_ten: {
                     color: ["#7B68EE", "#20a0ff"],
                     title: {
-                        text: '药品趋势图/周 Top10',
+                        text: '药品趋势图/月 Top10',
                         x: 'left'
                     },
                     tooltip: {
@@ -232,7 +241,7 @@
                     },
                     yAxis: {
                         type: 'value',
-                        name:'金额/万元',
+                        name:'数量/盒',
                         data: []
                     },
                     series: [
@@ -303,7 +312,7 @@
                     },
                     series: [
                         {
-                            name: "数量",
+                            name: "金额",
                             type: "bar",
                             data: [],
                             markLine:{
@@ -321,17 +330,20 @@
                                 normal:{
                                     barBorderRadius:[10, 10, 10, 10]
                                 }
+                            },
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'outside',
+                                    formatter: '{c}万元',
+//                                    interval:0,
+                                    rotate:45
+                                }
                             }
-                        },
-                        {
-                            name: 'GDP占比',
-                            type: 'pie',
-                            center: ['75%', '35%'],
-                            radius: '28%',
-                            z: 100
                         }
                     ]
-                }
+                },
+                temps:[]
             }
         },
         filters: {
@@ -372,8 +384,35 @@
                 _this.drug_month_top_ten.series[0].data = [];
 
             },
+            loadDataWeekAndMonth:function(product,dateType){
+                 let count =6,rand = 1, unit ="";
+                let cycle= null;
+                let productName = product==='drug'?"药品":"耗材";
+                switch(dateType){
+                    case "week":
+                        cycle = this.drug_week;
+                        count=6; rand=1;unit="周";
+                        break;
+                    case "month":
+                        cycle = this.drug_month;
+                        count=13; rand=4;unit="月";
+                        break;
+                }
+                    cycle.legend.data = ['金额'];
+                    cycle.xAxis.name="时间";
+                    cycle.yAxis.name ="金额/万元";
+                    for(let i = 1; i < count; i++){
+                        cycle.series[0].name = '金额';
+                        cycle.xAxis.data.push(i + unit);
+                        cycle.series[0].data.push(GetRandomNum(1, 20)*rand);
+                    }
+                    cycle.title.text=productName+unit+"销售额";
+                    cycle.series[0].itemStyle.normal.barBorderRadius= [10,10,0,0];
+
+            },
             loadDataCharts:function(product,dateType){
                 let params = LogisticData;
+                let productName = product==='drug'?"药品":"耗材";
                 if (this.mock) {
                     params = Object.assign({'statFunc': 'loadDataCharts', 'type': dateType,'other':product}, params);
                 }
@@ -392,30 +431,39 @@
                         cycle= this.drug_month_top_ten;
                         break;
                 }
-                aggregate(params).then(data => {
-                      for(let key in data){
-                        let value = data[key].num;
-                        let avg = data[key].avg;
-                        let name = data[key]._id.axisName;
-                        // 取不到的，则直接展示渠道编码
-                        cycle.legend.data=['数量'];
-                        cycle.series[0].name = cycle.legend.data[0];
-                        cycle.xAxis.data.push(name);
-                        cycle.series[0].data.push(value);
-                      }
-               });
+
+                if(dateType==="week_top_ten"){
+                    aggregate(params).then(data => { for(let key in data){
+                            let value = data[key].num;
+                            let avg = data[key].avg;
+                            let name = data[key]._id.axisName;
+                            // 取不到的，则直接展示渠道编码
+                            cycle.legend.data=['数量'];
+                            cycle.series[0].name = cycle.legend.data[0];
+                            cycle.xAxis.data.push(name);
+                            cycle.series[0].data.push(value);
+                            this.temps.push(value* GetRandomNum(1,30))
+                        }
+                    });
+                }
+                if(dateType==="month_top_ten"){
+                    cycle.series[0].name = this.drug_week_top_ten.legend.data[0];
+                    cycle.xAxis.data=this.drug_week_top_ten.xAxis.data;
+
+                    cycle.series[0].data= this.temps;
+                }
+                cycle.title.text=productName+ "趋势图/月 Top10";
                 cycle.series[0].itemStyle.normal.barBorderRadius= [10,10,0,0];
             },
             statAll:function () {
                 let _this = this;
-
                 console.log(_this.radio3);
                 // 统计前初始化数据先，新增统计需要在此配置好初始化
                 _this.initData(_this.radio3);
                 // week统计
-                _this.loadDataCharts(_this.radio3,'week');
+                _this.loadDataWeekAndMonth(_this.radio3,'week');
                 // 月统计
-                _this.loadDataCharts(_this.radio3,'month');
+                _this.loadDataWeekAndMonth(_this.radio3,'month');
                 // week_top_ten 统计
                 _this.loadDataCharts(_this.radio3,'week_top_ten');
                 // month_top_ten 统计
