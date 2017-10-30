@@ -59,7 +59,7 @@ export default  {
 
         // 各种统计
         mock_fetch.onPost('/charts/v1/aggregate').reply(config => {
-                let {statFunc, type,other} = JSON.parse(config.data);
+                let {statFunc, type,other,equipmentType} = JSON.parse(config.data);
                 let Res = '';
                 if ('devTypeStat' === statFunc) {
                     switch (type) {
@@ -167,7 +167,7 @@ export default  {
 
                 if('technicalOfficesModel'=== statFunc){
                     // debugger;
-                    Res = equipentAccessData(type,other,1,500);
+                    Res = equipentAccessData(type,other,1,equipmentType==0?500*4:500);
                     console.log('tet');
                 }
                 if('coreLogisticModel'=== statFunc){

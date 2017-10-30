@@ -116,12 +116,13 @@ export function equipentAccessData(date,technicalValue,min,max) {
 
     let eData = {"result": []};
     // debugger;
+    // console.log('date:'+date);
 
-    console.log('date:'+date);
     let advanceTime = moment(date,'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm');
     console.log(advanceTime);
     for (let i = 0; i < 24; i++) {
         let  index=  GetRandomNum(0, equipmentType.length-1);
+        advanceTime = moment(advanceTime).subtract(-1, 'hour').format('YYYY-MM-DD HH:mm');
         eData.result.push({
             _id: {
                 axisName: equipmentType[index].label,
@@ -132,8 +133,7 @@ export function equipentAccessData(date,technicalValue,min,max) {
             intNum: GetRandomNum(min, max),
             outNum: GetRandomNum(-max, -min)
         });
-        advanceTime = moment(advanceTime).subtract(-1, 'hour').format('YYYY-MM-DD HH:mm');
-        // console.log('a:'+advanceTime);
+     // console.log('a:'+advanceTime);
     }
     return eData;
 }
