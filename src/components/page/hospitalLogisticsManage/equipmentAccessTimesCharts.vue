@@ -42,7 +42,6 @@
                     </el-card>
                 </el-col>
             </el-row>
-
              <el-dialog title="进／出列表明细" :visible.sync="dialogTableVisible">
                  <span class="demonstration">进明细:</span>
                  <el-table
@@ -63,15 +62,16 @@
                      <el-table-column
                          prop="equipmentName"
                          label="传输载体">
-                         <!--<template slot-scope="scope">-->
-                             <!--<el-popover trigger="hover" placement="top">-->
-                                 <!--<p>姓名: {{ scope.row }}</p>-->
-                                 <!--<p>住址: {{ scope.row }}</p>-->
-                                 <!--<div slot="reference" class="name-wrapper">-->
-                                     <!--<el-tag size="medium">{{ scope.row }}</el-tag>-->
-                                 <!--</div>-->
-                             <!--</el-popover>-->
-                         <!--</template>-->
+                         <template  scope="scope">
+                             <el-popover trigger="hover" placement="right">
+                                 <div class="equipment">
+                                     <img v-bind:src="scope.row.pic" alt="">
+                                 </div>
+                                 <div slot="reference" class="name-wrapper">
+                                     <el-tag  size="medium">{{scope.row.equipmentName}}</el-tag>
+                                 </div>
+                             </el-popover>
+                         </template>
                      </el-table-column>
                      <el-table-column
                          prop="content"
@@ -103,6 +103,16 @@
                      <el-table-column
                          prop="equipmentName"
                          label="传输载体">
+                         <template  scope="scope">
+                             <el-popover trigger="hover" placement="right">
+                                 <div class="equipment">
+                                     <img v-bind:src="scope.row.pic" alt="" />
+                                 </div>
+                                 <div slot="reference" class="name-wrapper">
+                                     <el-tag  size="medium">{{scope.row.equipmentName}}</el-tag>
+                                 </div>
+                             </el-popover>
+                         </template>
                      </el-table-column>
                      <el-table-column
                          prop="content"
@@ -115,8 +125,10 @@
                      </el-table-column>
                  </el-table>
              </el-dialog>
+            <img src="../../../assets/go1.jpeg" alt="">
         </section>
     </section>
+
 </template>
 <script>
     import IEcharts from 'vue-echarts-v3/src/full.vue';
@@ -325,6 +337,10 @@
                             content:'进／'+['A','B','C','D','E'][GetRandomNum(0,4)],
                             date: time
 //                            pic: "../../../assets/go"+GetRandomNum(1,2)+".jpeg"
+=======
+                            date: time,
+                            pic: "../assets/go"+GetRandomNum(1,2)+".jpeg"
+>>>>>>> develop
                         });
                     }
                     //出
@@ -341,7 +357,44 @@
                             name:operator[GetRandomNum(0,operator.length-1)].name,
                             equipmentName: equipmentType[GetRandomNum(0,2)].label,
                             content:'出／'+['A','B','C','D','E'][GetRandomNum(0,4)],
-                            date: time
+                            date: time,
+                            pic: "../../../assets/go"+GetRandomNum(1,2)+".jpeg"
+                        });
+                    }
+                    this.dialogTableVisible =true;
+                }else{
+                    this.tableData4=[];
+                    let outCount =Math.abs(arguments[0].value);
+                    console.log(outCount);
+                    let time ='';
+                    //出
+                    for(let i=0;i<outCount;i++){
+                        time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
+                        this.tableData4.push( {
+                            id:i+1,
+                            name:operator[GetRandomNum(0,operator.length-1)].name,
+                            equipmentName: equipmentType[GetRandomNum(0,2)].label,
+                            content:'进／'+['A','B','C','D','E'][GetRandomNum(0,4)],
+                            date: time,
+                            pic: "../../../assets/go"+GetRandomNum(1,2)+".jpeg"
+                        });
+                    }
+                    //进
+                    let currentTimeIndex =this.chart.xAxis.data.indexOf(arguments[0].name,0);
+                    let intCount =Math.abs(this.chart.series[0].data[currentTimeIndex]);
+//                    console.log(this.chart.xAxis.data);
+//                    console.log(currentTimeIndex);
+//                    console.log(count+'---'+intCount);
+//                    console.log(this.chart.series[1].data);
+                    for(let i=0;i<intCount;i++){
+                        time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
+                        this.tableData3.push( {
+                            id:i+1,
+                            name:operator[GetRandomNum(0,operator.length-1)].name,
+                            equipmentName: equipmentType[GetRandomNum(0,2)].label,
+                            content:'出／'+['A','B','C','D','E'][GetRandomNum(0,4)],
+                            date: time,
+                            pic: "../../../assets/go"+GetRandomNum(1,2)+".jpeg"
                         });
                     }
                     this.dialogTableVisible =true;
@@ -401,5 +454,11 @@
         float: left;
         width: 100%;
         height: 400px;
+    }
+    .equipment{
+        img{
+            width: 100px;
+            height: 50px;
+        }
     }
 </style>
