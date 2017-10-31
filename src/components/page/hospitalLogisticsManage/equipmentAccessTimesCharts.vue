@@ -106,7 +106,7 @@
                         <template  scope="scope">
                             <el-popover trigger="hover" placement="right">
                                 <div class="equipment">
-                                    <img v-bind:src="scope.row.pic" alt="" />
+                                    <img  :src="scope.row.pic" alt="" />
                                 </div>
                                 <div slot="reference" class="name-wrapper">
                                     <el-tag  size="medium">{{scope.row.equipmentName}}</el-tag>
@@ -125,7 +125,6 @@
                     </el-table-column>
                 </el-table>
             </el-dialog>
-            <img src="../../../assets/go1.jpeg" alt="">
         </section>
     </section>
 
@@ -331,7 +330,7 @@
                             equipmentName: equipmentType[GetRandomNum(0,2)].label,
                             content:'进／'+['A','B','C','D','E'][GetRandomNum(0,4)],
                             date: time,
-                            pic: "../assets/go"+GetRandomNum(1,2)+".jpeg"
+                            pic: "../static/img/go"+GetRandomNum(1,2)+".jpeg"
                         });
                     }
                     //出
@@ -349,7 +348,7 @@
                             equipmentName: equipmentType[GetRandomNum(0,2)].label,
                             content:'出／'+['A','B','C','D','E'][GetRandomNum(0,4)],
                             date: time,
-                            pic: "../../../assets/go"+GetRandomNum(1,2)+".jpeg"
+                            pic: "../static/img/go"+GetRandomNum(1,2)+".jpeg"
                         });
                     }
                     this.dialogTableVisible =true;
@@ -367,7 +366,7 @@
                             equipmentName: equipmentType[GetRandomNum(0,2)].label,
                             content:'进／'+['A','B','C','D','E'][GetRandomNum(0,4)],
                             date: time,
-                            pic: "../../../assets/go"+GetRandomNum(1,2)+".jpeg"
+                            pic: "../static/img/assets/go"+GetRandomNum(1,2)+".jpeg"
                         });
                     }
                     //进
@@ -385,7 +384,7 @@
                             equipmentName: equipmentType[GetRandomNum(0,2)].label,
                             content:'出／'+['A','B','C','D','E'][GetRandomNum(0,4)],
                             date: time,
-                            pic: "../../../assets/go"+GetRandomNum(1,2)+".jpeg"
+                            pic: "../static/img/go"+GetRandomNum(1,2)+".jpeg"
                         });
                     }
                     this.dialogTableVisible =true;
@@ -417,5 +416,8 @@
             width: 100px;
             height: 50px;
         }
+    }
+    .el-tag{
+        background:#d69d85;
     }
 </style>

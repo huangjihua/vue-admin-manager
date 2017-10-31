@@ -25,17 +25,14 @@
         </el-row>
         <p/>
         <el-row :gutter="20">
-            <el-col :xs="24" :sm="24" :md="24" :lg="24">
+            <el-col :xs="24" :sm="24" :md="14" :lg="14">
                 <el-card class="box-card">
                     <div class="echarts">
                         <IEcharts :option="firstLeftChart"></IEcharts>
                     </div>
                 </el-card>
             </el-col>
-        </el-row>
-        <p/>
-        <el-row :gutter="20">
-            <el-col :xs="24" :sm="24" :md="24" :lg="24">
+            <el-col :xs="24" :sm="24" :md="10" :lg="10">
                 <el-card class="box-card">
                     <div class="echarts">
                         <IEcharts :option="firstRightChart"></IEcharts>
@@ -170,7 +167,7 @@
                 firstLeftChart: {
                     color: ["#FF4500", "#20a0ff","#2E8B57","#FFFF00","#ADFF2F","#FFA500","#FFE4B5","#8B4513","#FFF5EE","#696969","#00CED1","#FF4500"],
                     title: {
-                        text: '进数统计',
+                        text: '进出数统计',
                         subtext: '全院核心物流数据'
                     },
                     tooltip: {
@@ -213,21 +210,20 @@
                     series: []
                 },
                 firstRightChart: {
-                    color: ["#FFE4B5","#8B4513","#FFF5EE","#696969","#00CED1","#FF4500","#FF4500", "#20a0ff","#2E8B57","#FFFF00","#ADFF2F","#FFA500"],
+                    color: ["#13CE66", "#20a0ff","#2E8B57","#FFFF00"],
                     title: {
-                        text: '出数统计',
-                        subtext: '全院核心物流数据'
+                        text: '设备/人工',
+                        subtext: ''
                     },
                     tooltip: {
                         trigger: 'axis'
                     },
                     legend: {
                         type: 'plain',
-                        orient: 'vertical',
-                        right: 0,
-                        top: 60,
-                        bottom: 20,
-                        data:[]
+//                        orient: 'vertical',
+                        top:30,
+                        right:10,
+                        data: ['设备/进','设备/出','人工／进','人工／出']
                     },
                     toolbox: {
                         show: false,
@@ -243,7 +239,7 @@
                     },
                     xAxis:  {
                         type: 'category',
-                        boundaryGap: true,
+                        boundaryGap: false,
                         data: [],
                         axisLabel: {
                             formatter: '{value}/h'
@@ -495,14 +491,7 @@
                         type:'line',
                         symbol:'none',  //这句就是去掉点的
                         smooth:true,  //这句就是让曲线变平滑的
-                        data:[]
-                    });
-                    _this.firstRightChart.series.push( {
-                        name:'',
-                        type:'line',
-                        symbol:'none',  //这句就是去掉点的
-                        smooth:true,  //这句就是让曲线变平滑的
-                        data:[]
+                        data:[],
                     });
                 }
             },
@@ -513,37 +502,20 @@
                     params = Object.assign({'statFunc': 'coreLogisticModel', 'type':this.dateValue,'other': this.technicalValue}, params);
                 }
                 let cycle= this.firstLeftChart;
-                let  cycleRight = this.firstRightChart;
-
                 aggregate(params).then(data => {
-                    cycle.legend.data=[];
-                    cycle.xAxis.data=[];
-                    cycleRight.legend.data=[];
-                    cycleRight.xAxis.data=[];
-                    let j =0;
+                    this.firstLeftChart.legend.data=[];
+                    this.firstLeftChart.xAxis.data=[];
+//                    this.firstLeftChart.series=[];
                     for( let i=0;i<data.length ;i++) {
-//                        cycle.legend.data.push(data[i].label + (i%2===0?"/进":"/出"));
-//                        cycle.series[i].name = data[i].label + (i%2===0?"/进":"/出");
-                        if(i%2===0){
-                            cycle.legend.data.push(data[i].label);
-                            cycle.series[i].name = data[i].label;
-                            j=i;
-                        }else{
-                            cycleRight.legend.data.push(data[i].label);
-                            cycleRight.series[j].name = data[i].label;
-                        }
-
-
+                        cycle.legend.data.push(data[i].label + (i%2===0?"/进":"/出"));
+                        cycle.series[i].name = data[i].label + (i%2===0?"/进":"/出");
 
                         for (let key in data[i].list) {
-                            if (i === 0) {
-                                cycle.xAxis.data.push(data[i].list[key]._id.date);
-                                cycleRight.xAxis.data.push(data[i].list[key]._id.date);
-                            }
+                            if (i === 0) cycle.xAxis.data.push(data[i].list[key]._id.date);
                             if(i%2===0){
                                 cycle.series[i].data.push(data[i].list[key].intNum);
                             }else{
-                                cycleRight.series[j].data.push(data[i].list[key].outNum);
+                                cycle.series[i].data.push(data[i].list[key].outNum);
                             }
                         }
                     }
@@ -687,7 +659,7 @@
                 // 统计前初始化数据先，新增统计需要在此配置好初始化
                 _this.initData();
                 _this.firstLeftChartLoad();
-//                _this.firstRightChartLoad();
+                _this.firstRightChartLoad();
             },
             statSendAll:function(){
                 let _this = this;

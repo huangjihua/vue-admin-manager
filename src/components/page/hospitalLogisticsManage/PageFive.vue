@@ -306,7 +306,7 @@
                         if(key==='0')self.chart.xAxis.data.push(moment().add(-i, self.radio3).format('YYYY-MM-DD'));
                         _data.push(num);
                     }
-                   
+
                     self.chart.series.push({
                         name:equipmentType[key].label,
                         type:'bar',
@@ -316,14 +316,14 @@
                         label: {
                             normal: {
                                 show: true,
-                                position: 'inside',
-                                align:'center'
+                                position: 'right',
+//                                align:'center'
                             }
                         },
                         itemStyle:{
                             barMaxWidth: '20',
                             normal:{
-                                barBorderRadius:[key==="3"?10:0, key==="3"?10:0, 0, 0]
+                                barBorderRadius:[key==="4"?10:0, key==="4"?10:0, 0, 0]
                             },
 //                            barCategoryGap:'2%'
                         }
@@ -365,19 +365,19 @@
                             normal: {
                                 show: true,
                                 position: 'inside',
-                                align:'center'
+//                                align:'center'
                             }
                         },
                         itemStyle:{
                             barMaxWidth: '20',
                             normal:{
-                                barBorderRadius:[key==="3"?10:0, key==="3"?10:0, 0, 0]
+                                barBorderRadius:[key==="1"?10:0, key==="1"?10:0, 0, 0]
                             },
 //                            barCategoryGap:'2%'
                         }
                     })
                 }
-   
+
             },
             chart3_4:function () {
                 let self =this;
@@ -400,10 +400,10 @@
                                     self.chart4.xAxis.data.push(OfficeType[index].label);
                                 }
                                 _data.push(num);
-                              
+
                             }
                         }
-                       
+
                     }
                     self.chart3.series.push({
                         name:equipmentType[key].label,
@@ -414,20 +414,20 @@
                         label: {
                             normal: {
                                 show: true,
-                                position: 'inside',
-                                align:'center'
+                                position: 'right',
+//                                align:'center'
                             }
                         },
                         itemStyle:{
                             barMaxWidth: '20',
                             normal:{
-                                barBorderRadius:[key==="3"?10:0, key==="3"?10:0, 0, 0]
-                            },
+                                barBorderRadius:[key==="4"?10:0, key==="4"?10:0, 0, 0]
+                            }
 //                            barCategoryGap:'2%'
                         }
-                    },)
+                    })
                 }
-    
+
                 //chart2
                 let array=[[]];
                 for(let a  in self.chart3.series){
@@ -467,7 +467,7 @@
                         itemStyle:{
                             barMaxWidth: '20',
                             normal:{
-                                barBorderRadius:[key==="3"?10:0, key==="3"?10:0, 0, 0]
+                                barBorderRadius:[key==="1"?10:0, key==="1"?10:0, 0, 0]
                             },
 //                            barCategoryGap:'2%'
                         }
@@ -481,7 +481,7 @@
         },
         mounted:function () {
             this.statAll();
-            
+
             this.chart3_4();
         }
     }
