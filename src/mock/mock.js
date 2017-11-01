@@ -156,7 +156,7 @@ export default  {
                             Res = formatDrug(other,15,80,1000);
                             break;
                         case 'week_top_ten':
-                            Res = formatDrug(other,10,1,100,'asc');
+                            Res = formatDrug(other,10,1,1000,'asc');
                             break;
                         case 'month_top_ten':
                             debugger;

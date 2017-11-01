@@ -16,6 +16,7 @@
                 <el-select v-model="technicalValue" v-on:change="statAll">
                     <el-option
                         v-for="item in technicalOffices"
+                        :key ="item.value"
                         :label="item.label"
                         :value="item.value"
                         :disabled="item.disabled">
@@ -50,6 +51,7 @@
                 <el-select v-model="dateTypeValue" v-on:change="statSendAll">
                     <el-option
                         v-for="item in dateType"
+                        :key ="item.value"
                         :label="item.label"
                         :value="item.value"
                         :disabled="item.disabled">

@@ -7,6 +7,7 @@
                     <el-select v-model="technicalValue" v-on:change="statAll">
                         <el-option
                             v-for="item in technicalOffices"
+                            :key ="item.value"
                             :label="item.label"
                             :value="item.value"
                             :disabled="item.disabled">
