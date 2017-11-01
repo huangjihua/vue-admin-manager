@@ -116,10 +116,10 @@ export function equipentAccessData(date,technicalValue,min,max) {
 
     let eData = {"result": []};
     // debugger;
-    // console.log('date:'+date);
+    // console.log('date:',eData);
 
     let advanceTime = moment(date,'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm');
-    console.log(advanceTime);
+    // console.log(advanceTime);
     for (let i = 0; i < 24; i++) {
         let  index=  GetRandomNum(0, equipmentType.length-1);
         advanceTime = moment(advanceTime).subtract(-1, 'hour').format('YYYY-MM-DD HH:mm');
@@ -150,7 +150,7 @@ export function coreLogisticData(date,technicalValue,min,max) {
     // debugger;
 
     let eData = {"result": []};
-    console.log('result');
+    console.log("result:",eData);
     for(let key in product){
         eData.result.push(product[key]);
         eData.result[key].list=[];

@@ -269,7 +269,6 @@
                     ]
                 },
                 drug_month_top_ten: {
-                    color: ["#FF1493", "#20a0ff"],
                     title: {
                         text: '药品趋势图/月 Top10',
                         x: 'left'
@@ -333,7 +332,7 @@
                             },
                             label: {
                                 normal: {
-                                    show: true,
+                                    show: false,
                                     position: 'outside',
                                     formatter: '{c}万元',
 //                                    interval:0,
@@ -442,7 +441,7 @@
                             cycle.series[0].name = cycle.legend.data[0];
                             cycle.xAxis.data.push(name);
                             cycle.series[0].data.push(value);
-                            this.temps.push(value* GetRandomNum(1,30))
+                            this.temps.push(value*GetRandomNum(10,100)/10000)
                         }
                     });
                 }

@@ -17,6 +17,7 @@
                     <el-select v-model="technicalValue" v-on:change="setAll">
                         <el-option
                             v-for="item in technicalOffices"
+                            :key="item.value"
                             :label="item.label"
                             :value="item.value"
                             :disabled="item.disabled">
@@ -26,6 +27,7 @@
                     <el-select v-model="equipmentValue" v-on:change="setAll">
                         <el-option
                             v-for="item in equipmentType"
+                            :key ="item.value"
                             :label="item.label"
                             :value="item.value">
                         </el-option>
@@ -37,7 +39,7 @@
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
                     <el-card class="box-card">
                         <div class="echarts">
-                            <IEcharts :option="chart" @click="onClickChart1"></IEcharts>
+                            <IEcharts :option="chart" v-on:click="onClickChart1" ></IEcharts>
                         </div>
                     </el-card>
                 </el-col>
@@ -45,6 +47,8 @@
             <el-dialog title="进／出列表明细" :visible.sync="dialogTableVisible">
                 <span class="demonstration">进明细:</span>
                 <el-table
+                    v-loading="loading"
+                    element-loading-text="拼命加载中"
                     :data="tableData3"
                     height="200"
                     border
@@ -86,6 +90,8 @@
                 </el-table>
                 <span class="demonstration">出明细:</span>
                 <el-table
+                    v-loading="loading"
+                    element-loading-text="拼命加载中"
                     :data="tableData4"
                     height="200"
                     border
@@ -103,6 +109,7 @@
                     <el-table-column
                         prop="equipmentName"
                         label="传输载体">
+
                         <template  scope="scope">
                             <el-popover trigger="hover" placement="right">
                                 <div class="equipment">
@@ -113,6 +120,7 @@
                                 </div>
                             </el-popover>
                         </template>
+
                     </el-table-column>
                     <el-table-column
                         prop="content"
@@ -142,6 +150,7 @@
         data() {
             return {
                 mock: true,
+                loading:true,
                 pickerOptions2: {
                     shortcuts: [
                         {
@@ -170,7 +179,7 @@
                         }]
                 },
                 technicalOffices: OfficeType,
-                equipmentValue:0,
+                equipmentValue:1,
                 equipmentType:equipmentType,
                 dateValue:null,
                 technicalValue: '1002',
@@ -293,102 +302,108 @@
                 this.chart.series[1].data=[];
             },
             technicalOfficesChart:function () {
+                let  that = this;
                 let params = technicalOfficesModel;
-                //                debugger;
-                if (this.mock) {
+                if (that.mock) {
                     params = Object.assign({'statFunc': 'technicalOfficesModel', 'type':this.dateValue,'other': this.technicalValue,'equipmentType':this.equipmentValue}, params);
                 }
-                let cycle= this.chart;
+                let cycle= that.chart;
                 aggregate(params).then(data => {
-                    console.log('llll')
-                for(let key in data){
-                    let intNum = data[key].intNum;
-                    let avg = data[key].avg;
-                    let name = data[key]._id.axisName;
-                    let date = data[key]._id.date;
-                    // 取不到的，则直接展示渠道编码
-                    cycle.xAxis.data.push(date);
-                    cycle.series[0].data.push(intNum);
-                    cycle.series[1].data.push(data[key].outNum);
-                }
-            });
+//                        console.log("result=",data);
+                        cycle.xAxis.data = [];
+                        cycle.series[0].data=[];
+                        cycle.series[1].data=[];
+                    for(let key in data){
+                        let intNum = data[key].intNum;
+                        let avg = data[key].avg;
+                        let name = data[key]._id.axisName;
+                        let date = data[key]._id.date;
+                        // 取不到的，则直接展示渠道编码
+                        cycle.xAxis.data.push(date);
+                        cycle.series[0].data.push(intNum);
+                        cycle.series[1].data.push(data[key].outNum);
+                    }
+                });
             },
             onClickChart1:function (event, instance, echarts) {
-                console.log(event);
+                let that = this;
+                this.dialogTableVisible =true;
                 //点击正数LINE
-                if(arguments[0].componentSubType==='line' && event.seriesIndex===0){
-                    this.tableData3=[];
-                    let count =arguments[0].value;
-                    console.log(count);
-                    let time ='';
-                    //进
-                    for(let i=0;i<count;i++){
-                        time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
-                        this.tableData3.push( {
-                            id:i+1,
-                            name:operator[GetRandomNum(0,operator.length-1)].name,
-                            equipmentName: equipmentType[GetRandomNum(0,2)].label,
-                            content:'进／'+['A','B','C','D','E'][GetRandomNum(0,4)],
-                            date: time,
-                            pic: "../static/img/go"+GetRandomNum(1,2)+".jpeg"
-                        });
+                setTimeout(() => {
+                    if(arguments[0].componentSubType==='line' && event.seriesIndex===0){
+                        this.tableData3=[];
+                        let count =arguments[0].value;
+                        console.log(count);
+                        let time ='';
+                        //进
+                        for(let i=0;i<count;i++){
+                            time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
+                            this.tableData3.push( {
+                                id:i+1,
+                                name:operator[GetRandomNum(0,operator.length-1)].name,
+                                equipmentName: equipmentType[GetRandomNum(0,2)].label,
+                                content:'进／'+['A','B','C','D','E'][GetRandomNum(0,4)],
+                                date: time,
+                                pic: "../static/img/go"+GetRandomNum(1,2)+".jpeg"
+                            });
+                        }
+                        //出
+                        let currentTimeIndex =this.chart.xAxis.data.indexOf(arguments[0].name,0);
+                        let outCount =Math.abs(this.chart.series[1].data[currentTimeIndex]);
+                        //                    console.log(this.chart.xAxis.data);
+                        //                    console.log(currentTimeIndex);
+                        //                    console.log(count+'---'+outCount);
+                        //                    console.log(this.chart.series[1].data);
+                        for(let i=0;i<outCount;i++){
+                            time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
+                            this.tableData4.push( {
+                                id:i+1,
+                                name:operator[GetRandomNum(0,operator.length-1)].name,
+                                equipmentName: equipmentType[GetRandomNum(0,2)].label,
+                                content:'出／'+['A','B','C','D','E'][GetRandomNum(0,4)],
+                                date: time,
+                                pic: "../static/img/go"+GetRandomNum(1,2)+".jpeg"
+                            });
+                        }
                     }
-                    //出
-                    let currentTimeIndex =this.chart.xAxis.data.indexOf(arguments[0].name,0);
-                    let outCount =Math.abs(this.chart.series[1].data[currentTimeIndex]);
-                    //                    console.log(this.chart.xAxis.data);
-                    //                    console.log(currentTimeIndex);
-                    //                    console.log(count+'---'+outCount);
-                    //                    console.log(this.chart.series[1].data);
-                    for(let i=0;i<outCount;i++){
-                        time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
-                        this.tableData4.push( {
-                            id:i+1,
-                            name:operator[GetRandomNum(0,operator.length-1)].name,
-                            equipmentName: equipmentType[GetRandomNum(0,2)].label,
-                            content:'出／'+['A','B','C','D','E'][GetRandomNum(0,4)],
-                            date: time,
-                            pic: "../static/img/go"+GetRandomNum(1,2)+".jpeg"
-                        });
+                    else{
+                        this.tableData4=[];
+                        let outCount =Math.abs(arguments[0].value);
+                        console.log(outCount);
+                        let time ='';
+                        //出
+                        for(let i=0;i<outCount;i++){
+                            time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
+                            this.tableData4.push( {
+                                id:i+1,
+                                name:operator[GetRandomNum(0,operator.length-1)].name,
+                                equipmentName: equipmentType[GetRandomNum(0,2)].label,
+                                content:'进／'+['A','B','C','D','E'][GetRandomNum(0,4)],
+                                date: time,
+                                pic: "../static/img/assets/go"+GetRandomNum(1,2)+".jpeg"
+                            });
+                        }
+                        //进
+                        let currentTimeIndex =this.chart.xAxis.data.indexOf(arguments[0].name,0);
+                        let intCount =Math.abs(this.chart.series[0].data[currentTimeIndex]);
+                        //                    console.log(this.chart.xAxis.data);
+                        //                    console.log(currentTimeIndex);
+                        //                    console.log(count+'---'+intCount);
+                        //                    console.log(this.chart.series[1].data);
+                        for(let i=0;i<intCount;i++){
+                            time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
+                            this.tableData3.push( {
+                                id:i+1,
+                                name:operator[GetRandomNum(0,operator.length-1)].name,
+                                equipmentName: equipmentType[GetRandomNum(0,2)].label,
+                                content:'出／'+['A','B','C','D','E'][GetRandomNum(0,4)],
+                                date: time,
+                                pic: "../static/img/go"+GetRandomNum(1,2)+".jpeg"
+                            });
+                        }
                     }
-                    this.dialogTableVisible =true;
-                }else{
-                    this.tableData4=[];
-                    let outCount =Math.abs(arguments[0].value);
-                    console.log(outCount);
-                    let time ='';
-                    //出
-                    for(let i=0;i<outCount;i++){
-                        time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
-                        this.tableData4.push( {
-                            id:i+1,
-                            name:operator[GetRandomNum(0,operator.length-1)].name,
-                            equipmentName: equipmentType[GetRandomNum(0,2)].label,
-                            content:'进／'+['A','B','C','D','E'][GetRandomNum(0,4)],
-                            date: time,
-                            pic: "../static/img/assets/go"+GetRandomNum(1,2)+".jpeg"
-                        });
-                    }
-                    //进
-                    let currentTimeIndex =this.chart.xAxis.data.indexOf(arguments[0].name,0);
-                    let intCount =Math.abs(this.chart.series[0].data[currentTimeIndex]);
-                    //                    console.log(this.chart.xAxis.data);
-                    //                    console.log(currentTimeIndex);
-                    //                    console.log(count+'---'+intCount);
-                    //                    console.log(this.chart.series[1].data);
-                    for(let i=0;i<intCount;i++){
-                        time =moment(arguments[0].name).subtract(-GetRandomNum(0,59),'second').format('YYYY-MM-DD H:mm:ss');
-                        this.tableData3.push( {
-                            id:i+1,
-                            name:operator[GetRandomNum(0,operator.length-1)].name,
-                            equipmentName: equipmentType[GetRandomNum(0,2)].label,
-                            content:'出／'+['A','B','C','D','E'][GetRandomNum(0,4)],
-                            date: time,
-                            pic: "../static/img/go"+GetRandomNum(1,2)+".jpeg"
-                        });
-                    }
-                    this.dialogTableVisible =true;
-                }
+                    that.loading = false;
+                },3000);
             },
             rowHove:function(event){
                 console.log(event);
@@ -400,7 +415,6 @@
         },
         mounted:function () {
             this.setAll();
-            //            this.technicalOfficesChart();
         }
     }
 </script>

@@ -260,7 +260,6 @@
                     ]
                 },
                 drug_month_top_ten: {
-                    color: ["#FF1493", "#20a0ff"],
                     title: {
                         text: '药品趋势图/月 Top10',
                         x: 'left'

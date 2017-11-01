@@ -17,7 +17,9 @@
             </el-col>
             <el-col :span="4" class="userinfo">
                 <el-dropdown trigger="hover">
-                    <span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar"/> {{nickname}}</span>
+                    <span class="el-dropdown-link userinfo-inner">
+                        <img :src="this.sysUserAvatar"/>
+                        {{nickname}}</span>
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
@@ -88,7 +90,7 @@
 <script>
     import { mapGetters } from 'vuex';
 //    import {getNickname, getSTSToken} from '../../api';
-    import avatar from '../../../static/img/avatar.gif';
+    import avatar from '../../../static/img/video-bg.png';
     export default {
         data() {
             return {
@@ -210,14 +212,16 @@
             height: 60px;
             line-height: 60px;
             background: $color-primary;
-            color: #fff;
+            color: #333;
+            border-bottom: 1px solid #f5f5f5;
+            box-sizing: border-box;
             .userinfo {
                 text-align: right;
                 padding-right: 35px;
                 float: right;
                 .userinfo-inner {
                     cursor: pointer;
-                    color: #fff;
+                    /*color: #fff;*/
                     img {
                         width: 40px;
                         height: 40px;
@@ -241,17 +245,23 @@
                     float: left;
                     margin: 10px 10px 10px 18px;
                 }
+                
                 .txt {
                     color: #fff;
                 }
             }
             .logo-width {
                 width: 230px;
-                background:  url("../../assets/swisslog.png") center no-repeat;
+                background:url("../../../static/img/logo.png") center no-repeat;
+                border-bottom: 1px solid #f5f5f5;
+                border-right: 1px solid #fff;
+                box-sizing: border-box;
             }
+            //../../assets/swisslog.png
             .logo-collapse-width {
                 width: 60px;
                 background: url("../../assets/swisslog-min.png") center no-repeat;
+                background-color: #fff;
             }
             .tools {
                 padding: 0px 23px;
@@ -277,9 +287,11 @@
                 .el-menu {
                     height: 100%;
                     .is-active{
-                        color:$color-primary;
+                        color:$color-selected;
                     }
+                    background-color: $color-primary;
                 }
+                
                 .collapsed {
                     width: 60px;
                     .item {
