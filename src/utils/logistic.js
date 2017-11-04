@@ -231,3 +231,41 @@ export function generateDate(gapType,gapNum) {
             break;
     }
 }
+
+/*
+ *  获取月的天数
+ * @param year  {number} 年 [可选]
+ * @param month  {number}  月 [可选]
+ */
+ export function  getDayNum(){
+     let curDate = new Date();
+     if( arguments.length>=2){
+         curDate=new Date(arguments[0],arguments[1],0);
+     }
+     let curMonth = curDate.getMonth();
+     curDate.setMonth(curMonth + 1);
+     curDate.setDate(0);
+     return  curDate.getDate();
+ }
+/*
+ *  要拆分成nums个随机数，而这nums个随机数相加刚刚好等于total
+ * @param total  {number} 拆分的数
+ * @param nums  {number} 随机次数
+ */
+export function randomDivide(total, nums) {
+    let rest = total;
+    const result = Array.apply(null, { length: nums })
+        .map((n, i) => nums - i)
+        .map(n => {
+            console.log(n+'-'+(rest / n * 2 - 1));
+            const v = 1 + Math.floor(Math.random() * (rest / n * 2 - 1));
+            rest -= v;
+            return v;
+        });
+    // console.log(result);
+    // console.log(rest);
+    // console.log( result[nums - 1]);
+     //处理最后一个数
+    result[nums - 1] += rest;
+    return result;
+}

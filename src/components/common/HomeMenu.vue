@@ -245,14 +245,14 @@
                     float: left;
                     margin: 10px 10px 10px 18px;
                 }
-                
+
                 .txt {
                     color: #fff;
                 }
             }
             .logo-width {
                 width: 230px;
-                background:url("../../../static/img/logo.png") center no-repeat;
+                background:#fff url("../../../static/img/logo.png") center no-repeat;
                 border-bottom: 1px solid #f5f5f5;
                 border-right: 1px solid #fff;
                 box-sizing: border-box;
@@ -291,7 +291,7 @@
                     }
                     background-color: $color-primary;
                 }
-                
+
                 .collapsed {
                     width: 60px;
                     .item {
