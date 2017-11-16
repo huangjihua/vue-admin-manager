@@ -109,7 +109,11 @@
                     <el-table-column
                         prop="equipmentName"
                         label="传输载体">
+<<<<<<< HEAD
                         <!--
+=======
+
+>>>>>>> develop
                         <template  scope="scope">
                             <el-popover trigger="hover" placement="right">
                                 <div class="equipment">
@@ -120,7 +124,11 @@
                                 </div>
                             </el-popover>
                         </template>
+<<<<<<< HEAD
                         -->
+=======
+
+>>>>>>> develop
                     </el-table-column>
                     <el-table-column
                         prop="content"
@@ -179,7 +187,7 @@
                         }]
                 },
                 technicalOffices: OfficeType,
-                equipmentValue:0,
+                equipmentValue:1,
                 equipmentType:equipmentType,
                 dateValue:null,
                 technicalValue: '1002',
@@ -302,24 +310,28 @@
                 this.chart.series[1].data=[];
             },
             technicalOfficesChart:function () {
+                let  that = this;
                 let params = technicalOfficesModel;
-                //                debugger;
-                if (this.mock) {
+                if (that.mock) {
                     params = Object.assign({'statFunc': 'technicalOfficesModel', 'type':this.dateValue,'other': this.technicalValue,'equipmentType':this.equipmentValue}, params);
                 }
-                let cycle= this.chart;
+                let cycle= that.chart;
                 aggregate(params).then(data => {
-                for(let key in data){
-                    let intNum = data[key].intNum;
-                    let avg = data[key].avg;
-                    let name = data[key]._id.axisName;
-                    let date = data[key]._id.date;
-                    // 取不到的，则直接展示渠道编码
-                    cycle.xAxis.data.push(date);
-                    cycle.series[0].data.push(intNum);
-                    cycle.series[1].data.push(data[key].outNum);
-                }
-            });
+//                        console.log("result=",data);
+                    cycle.xAxis.data = [];
+                    cycle.series[0].data=[];
+                    cycle.series[1].data=[];
+                    for(let key in data){
+                        let intNum = data[key].intNum;
+                        let avg = data[key].avg;
+                        let name = data[key]._id.axisName;
+                        let date = data[key]._id.date;
+                        // 取不到的，则直接展示渠道编码
+                        cycle.xAxis.data.push(date);
+                        cycle.series[0].data.push(intNum);
+                        cycle.series[1].data.push(data[key].outNum);
+                    }
+                });
             },
             onClickChart1:function (event, instance, echarts) {
                 let that = this;
@@ -397,7 +409,6 @@
                                 pic: "../static/img/go"+GetRandomNum(1,2)+".jpeg"
                             });
                         }
-        
                     }
                     that.loading = false;
                 },3000);
@@ -412,7 +423,6 @@
         },
         mounted:function () {
             this.setAll();
-            //            this.technicalOfficesChart();
         }
     }
 </script>

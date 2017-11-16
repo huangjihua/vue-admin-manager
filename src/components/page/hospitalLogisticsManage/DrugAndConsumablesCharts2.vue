@@ -12,7 +12,7 @@
                 <el-col :xs="24" :sm="24" :md="24" :lg="24">
                     <el-card class="box-card">
                         <div class="echarts">
-                            <IEcharts :option="drug_week"></IEcharts>
+                            <IEcharts :option="drug_week" ></IEcharts>
                         </div>
                     </el-card>
                 </el-col>
@@ -32,26 +32,31 @@
                 <el-col :xs="24" :sm="24" :md="12" :lg="12">
                     <el-card class="box-card">
                         <div class="echarts">
-                            <IEcharts :option="drug_week_top_ten"></IEcharts>
+                            <IEcharts :option="drug_week_top_ten" @click="onClickCount"></IEcharts>
                         </div>
                     </el-card>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="12" :lg="12">
                     <el-card class="box-card">
                         <div class="echarts">
-                            <IEcharts :option="drug_month_top_ten"></IEcharts>
+                            <IEcharts :option="drug_month_top_ten" @click="onClickAmount"></IEcharts>
                         </div>
                     </el-card>
                 </el-col>
             </el-row>
         </section>
+        <el-dialog :title="title" :visible.sync="dialogLineVisible">
+            <ve-line :data="chartData" :settings="chartSettings"></ve-line>
+        </el-dialog>
     </section>
 </template>
 
 <script>
     import IEcharts from 'vue-echarts-v3/src/full.vue';
+    import ElDialog from "../../../../node_modules/element-ui/packages/dialog/src/component.vue";
+    import VeLine from 'v-charts/lib/line';
     import {aggregate} from 'api/aggregate';
-    import {GetRandomNum} from 'utils/logistic';
+    import {GetRandomNum,getDayNum,randomDivide} from 'utils/logistic';
     import LogisticData from 'static/requestList/swissdata/logisticsStatistics.json';
     // 时间处理
     import moment from 'moment';
@@ -60,6 +65,9 @@
             return {
                 mock: true,
                 radio3: 'drug',
+                days:getDayNum(),
+                title:'',
+                dialogLineVisible:false,
                 drug_week: {
                     title: {
                         text: '药品趋势图/周',
@@ -362,7 +370,9 @@
             }
         },
         components : {
-            IEcharts
+            IEcharts,
+            ElDialog,
+            VeLine
         },
         methods:{
             initData:function(){
@@ -454,6 +464,40 @@
                 cycle.title.text=productName+ "趋势图/月 Top10";
                 cycle.series[0].itemStyle.normal.barBorderRadius= [10,10,0,0];
             },
+            onClickCount:function (event, instance, echarts) {
+                let that = this;
+                if(arguments[0].componentSubType === 'bar'){
+                    that.title= event.name+' 每日销售数量';
+                    this.dialogLineVisible =true;
+                    let count  =event.data;
+                    let arrs =  randomDivide(count,that.days);
+                    let data=[];
+                    for(let i=0;i<that.days;i++){
+                        data.push({ '日期': i+1,'数量':arrs[i]});
+                    }
+                    that.chartData = {
+                        columns: ['日期', '数量'],
+                        rows:  data
+                    };
+                }
+            },
+            onClickAmount:function (event, instance, echarts) {
+                let that = this;
+                if(arguments[0].componentSubType === 'bar'){
+                    that.title=event.name+ '每日销售售额';
+                    this.dialogLineVisible =true;
+                    let count  =event.data*10000;
+                    let arrs =  randomDivide(count,that.days);
+                    let data=[];
+                    for(let i=0;i<that.days;i++){
+                        data.push({ '日期': i+1,'金额/元':arrs[i]});
+                    }
+                    that.chartData = {
+                        columns: ['日期', '金额/元'],
+                        rows:  data
+                    };
+                }
+            },
             statAll:function () {
                 let _this = this;
                 console.log(_this.radio3);
@@ -467,6 +511,24 @@
                 _this.loadDataCharts(_this.radio3,'week_top_ten');
                 // month_top_ten 统计
                 _this.loadDataCharts(_this.radio3,'month_top_ten');
+            }
+        },
+        created: function () {
+            this.chartData = {
+                columns: ['日期', '数量'],
+                rows: [
+                    { '日期': '1月1日','数量': 100 },
+                    { '日期': '1月2日', '数量':22},
+                    { '日期': '1月3日','数量':44},
+                    { '日期': '1月4日', '数量':43 },
+                    { '日期': '1月5日', '数量':55 },
+                    { '日期': '1月6日', '数量':88 }
+                ]
+            };
+            this.chartSettings = {
+//                axisSite: { right: ['占比'] },
+//                yAxisType: ['KMB', 'percent'],
+//                yAxisName: ['数量', '比率']
             }
         },
         mounted: function () {

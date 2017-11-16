@@ -116,10 +116,10 @@ export function equipentAccessData(date,technicalValue,min,max) {
 
     let eData = {"result": []};
     // debugger;
-    // console.log('date:'+date);
+    // console.log('date:',eData);
 
     let advanceTime = moment(date,'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm');
-    console.log(advanceTime);
+    // console.log(advanceTime);
     for (let i = 0; i < 24; i++) {
         let  index=  GetRandomNum(0, equipmentType.length-1);
         advanceTime = moment(advanceTime).subtract(-1, 'hour').format('YYYY-MM-DD HH:mm');
@@ -150,7 +150,7 @@ export function coreLogisticData(date,technicalValue,min,max) {
     // debugger;
 
     let eData = {"result": []};
-    console.log('result');
+    console.log("result:",eData);
     for(let key in product){
         eData.result.push(product[key]);
         eData.result[key].list=[];
@@ -230,4 +230,42 @@ export function generateDate(gapType,gapNum) {
 
             break;
     }
+}
+
+/*
+ *  获取月的天数
+ * @param year  {number} 年 [可选]
+ * @param month  {number}  月 [可选]
+ */
+ export function  getDayNum(){
+     let curDate = new Date();
+     if( arguments.length>=2){
+         curDate=new Date(arguments[0],arguments[1],0);
+     }
+     let curMonth = curDate.getMonth();
+     curDate.setMonth(curMonth + 1);
+     curDate.setDate(0);
+     return  curDate.getDate();
+ }
+/*
+ *  要拆分成nums个随机数，而这nums个随机数相加刚刚好等于total
+ * @param total  {number} 拆分的数
+ * @param nums  {number} 随机次数
+ */
+export function randomDivide(total, nums) {
+    let rest = total;
+    const result = Array.apply(null, { length: nums })
+        .map((n, i) => nums - i)
+        .map(n => {
+            console.log(n+'-'+(rest / n * 2 - 1));
+            const v = 1 + Math.floor(Math.random() * (rest / n * 2 - 1));
+            rest -= v;
+            return v;
+        });
+    // console.log(result);
+    // console.log(rest);
+    // console.log( result[nums - 1]);
+     //处理最后一个数
+    result[nums - 1] += rest;
+    return result;
 }

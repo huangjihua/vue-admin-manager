@@ -1,8 +1,8 @@
-# DEMO
+# 医院数据统计系统 
 
 展示数据通过mock.js 构造
 
-[Demo 地址](https://fantasykai.github.io/vue-admin-manager)
+[Demo 地址](https://github.com/huangjihua/vue-admin-manager)
 
 # vue-admin-manager
 
@@ -139,4 +139,5 @@ Dashboard 页面使用了vue-echarts-v3组件，是刚开始熟悉vue时，硬�
 代码尚需逐步优化，哈哈
 
 
-- [个人博客 https://fantasykai.cc](https://fantasykai.cc)
+- [个人博客 https://huangjihua.com.cn](https://huangjihua.com.cn)
+

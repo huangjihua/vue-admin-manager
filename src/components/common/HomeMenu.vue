@@ -245,14 +245,22 @@
                     float: left;
                     margin: 10px 10px 10px 18px;
                 }
+<<<<<<< HEAD
                 
+=======
+
+>>>>>>> develop
                 .txt {
                     color: #fff;
                 }
             }
             .logo-width {
                 width: 230px;
+<<<<<<< HEAD
                 background:url("../../../static/img/logo.png") center no-repeat;
+=======
+                background:#fff url("../../../static/img/logo.png") center no-repeat;
+>>>>>>> develop
                 border-bottom: 1px solid #f5f5f5;
                 border-right: 1px solid #fff;
                 box-sizing: border-box;
@@ -291,7 +299,11 @@
                     }
                     background-color: $color-primary;
                 }
+<<<<<<< HEAD
                 
+=======
+
+>>>>>>> develop
                 .collapsed {
                     width: 60px;
                     .item {

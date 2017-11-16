@@ -4,14 +4,14 @@
             <div class="block">
                 <span class="demonstration">日期:</span>
                 <el-date-picker
-                    v-model="dateValue"
-                    type="date"
-                    align="right"
-                    :picker-options="pickerOptions2"
-                    placeholder="选择日前"
-                    v-on:change="statAll"
-                >
-                </el-date-picker>
+                v-model="dateValue"
+                type="date"
+                align="right"
+                :picker-options="pickerOptions2"
+                placeholder="选择日前"
+                v-on:change="statAll"
+            >
+            </el-date-picker>
                 <span class="demonstration">科室:</span>
                 <el-select v-model="technicalValue" v-on:change="statAll">
                     <el-option
